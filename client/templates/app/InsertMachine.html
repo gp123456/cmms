@@ -1,0 +1,39 @@
+<template name="InsertMachine">
+    <div id="container">
+        {{> Nav}}
+        <div class="content">
+            <div class="row-fluid">
+                <div class="offset4 span2">
+                    <form id="insert-machine" class="form-horizontal" method="post" style="width: 300px">
+                        <div class="control-group center">
+                            <h3>Εισαγωγή Νέας Μηχανής</h3>
+                        </div>
+                        <div class="form-group control-group center">
+                            <select name="department" id="department" style="width: 315px" required>
+                                <option value="">Επέλεξε Τμήμα</option>
+                                {{#each departments}}
+                                <option value="{{id}}">{{description}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="description" id="description" placeholder="Όνομα Μηχανής" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="code" id="code" placeholder="Κωδικός Μηχανής">
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="input" id="input" placeholder="Είσοδοι Μηχανής" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="output" id="output" placeholder="Έξοδοι Μηχανής" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="submit" value="Εισαγωγή" class="btn btn-primary btn-block btn-large" style="width: 315px">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,13 @@
+{
+  "name": "cmms",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.18.0",
+    "json2csv": "^3.7.3",
+    "meteor-node-stubs": "~0.2.0",
+    "metismenu": "^2.6.2"
+  }
+}

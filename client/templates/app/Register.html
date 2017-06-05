@@ -1,0 +1,63 @@
+<template name="Register">
+    <script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>
+    <style type="text/css">
+        #registry-form .has-error .control-label,
+        #registry-form .has-error .help-block,
+        #registry-form .has-error .form-control-feedback {
+            color: #f39c12;
+        }
+
+        #registry-form .has-success .control-label,
+        #registry-form .has-success .help-block,
+        #registry-form .has-success .form-control-feedback {
+            color: #18bc9c;
+        }
+    </style>
+    <div id="container">
+        {{> Nav}}
+        <div class="content">
+            <div class="row-fluid">
+                <div class="offset4 span2">
+                    <form id="register" class="form-horizontal" method="post" style="width: 325px">
+                        <div class="control-group center">
+                            <h3>Εισαγωγή Νέου Χρήστη</h3>
+                        </div>
+                        <div class="form-group control-group center">
+                            <select name="department" id="department" multiple required>
+                                {{#each departments}}
+                                <option value="{{id}}">{{description}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="form-group control-group center">
+                            <select name="type" id="type" style="width: 338px" required>
+                                <option value="">Επέλεξε Τύπο Χρήστη</option>
+                                {{#each types}}
+                                <option value="{{id}}">{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="name"  id="name" placeholder="Name" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="username" id="username" placeholder="Username" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="text" name="username" id="username" placeholder="Username" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="password" name="password"  id="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="form-group control-group center">
+                            <input type="submit" value="Εισαγωγή" style="width: 338px" class="btn btn-primary btn-block btn-large">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,85 @@
+<template name="Criteria">
+    <style type="text/css">
+        .datepicker,
+        .table-condensed {
+            width: 200px;
+            font-size: x-small;
+        }
+    </style>
+    <div class="row-fluid">
+        <div class="offset4 span4">
+            <div class="form-group control-group">
+                <a class="btn btn-default btn-xs" data-toggle="collapse" href="#collapseOne">Κριτήρια</a>
+                {{#if Pareto}}
+                <a class="btn btn-default btn-xs" id="clear-pareto">Ανανέωση</a>
+                {{/if}}
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <form class="form-horizontal" id="form-criteria" method="post" style="overflow-y:auto; overflow-x:auto; width: 400px">
+                    <div class="form-group control-group">
+                        <input type="text" id="from-criteria" name="fromCriteria" placeholder="Από" style="width: 155px; " />
+                        <input type="text" id="to-criteria" name="toCriteria" placeholder="Μέχρι" style="width: 155px" />
+                    </div>
+                    <div class="form-group control-group">
+                        <button id="sb-department-criteria" class="btn btn-primary btn-xs" style="width: 100px">Ανανέωση</button>
+                        <select id="department-criteria" multiple>
+                            {{#each departments}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group control-group">
+                        <select id="machine-criteria" multiple>
+                            {{#each machines}}
+                            <option value="{{id}}">{{code}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    {{#if noPUser}}
+                    <div class="form-group control-group">
+                        <button id="sb-type-criteria" class="btn btn-primary btn-xs" style="width: 100px">Ανανέωση</button>
+                        <select name="type-criteria" id="type-criteria" multiple>
+                            {{#each types}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    {{/if}}
+                    <div class="form-group control-group">
+                        {{#if NoPareto}}
+                        <button id="sb-cause-criteria" class="btn btn-primary btn-xs" style="width: 100px">Ανανέωση</button>
+                        <select id="cause-criteria" multiple>
+                            {{#each causes}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                        {{else}}
+                        <select id="cause-criteria" multiple>
+                            {{#each causes}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                        {{/if}}
+                    </div>
+                    {{#if NoPareto}}
+                    <div class="form-group control-group">
+                        <select id="subcause-criteria" multiple>
+                            {{#each subcauses}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    {{/if}}
+                    <div class="form-group control-group">
+                        <select id="user-criteria" multiple>
+                            {{#each users}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <button id="sb-criteria" class="btn btn-primary btn-block btn-large" style="width: 340px">Εκτέλεση</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>

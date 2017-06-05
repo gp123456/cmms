@@ -1,0 +1,32 @@
+<template name="Pareto">
+    <style type="text/css">
+        .table thead th {
+            color: black;
+            background-color: white;
+        }
+        .table tbody tr {
+            background-color: white;
+        }
+        .table tbody tr:hover {
+            background-color: gray;
+        }
+        .table tbody td a {
+            color: blueviolet;
+        }
+        .table tbody td a:hover {
+            color: blue;
+        }
+        .pull-right {
+            margin-right: 10px;
+        }
+    </style>
+    <link href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css" rel="stylesheet" media="screen">
+    <div id="container">
+        {{> Nav}}
+        <div class="content">
+            <h3 style="text-align: center">Προβολή Pareto</h3>
+            {{> Criteria}}
+            <canvas id="canvas1" width="1300" height="800"></canvas>
+        </div>
+    </div>
+</template>

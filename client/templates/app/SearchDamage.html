@@ -1,0 +1,163 @@
+<template name="SearchDamage">
+    <style type="text/css">
+        .table thead th {
+            color: black;
+            background-color: white;
+        }
+        .table tbody tr {
+            background-color: white;
+        }
+        .table tbody tr:hover {
+            background-color: gray;
+        }
+        .table tbody td a {
+            color: blueviolet;
+        }
+        .table tbody td a:hover {
+            color: blue;
+        }
+        .pull-right {
+            margin-right: 10px;
+        }
+    </style>
+    <script>
+        function dateSorter(a, b) {
+            if (a.indexOf("<a") !== -1) {
+                a = a.substring(a.length - 23, a.length - 4);
+            }
+            if (b.indexOf("<a") !== -1) {
+                b = b.substring(b.length - 23, b.length - 4);
+            }
+            a = moment(a).format("X");
+            b = moment(b).format("X");
+
+
+            return a > b ? -1 : a < b ? 1 : 0;
+        }
+        function durationSorter(a, b) {
+            a = parseInt(a.substring(0, a.length - 1));
+            b = parseInt(b.substring(0, b.length - 1));
+
+            return a > b ? 1 : a < b ? -1 : 0;
+        }
+    </script>
+    <div id="container">
+        {{> Nav}}
+        <div class="content" style="width: 90%">
+            <h3 style="text-align: center">Reporting</h3>
+            {{> Criteria}}
+            <div class="row">
+                <div id="toolbar" class="btn-group">
+                    <button id="export" class="btn btn-default">Εξαγωγή Excel</button>
+                    {{#if PAdmin}}
+                    <button id="recycle" class="btn btn-default">Διαγραμμένες Αιτίες</button>
+                    {{/if}}
+                </div>
+                <div style="visibility:hidden;">{{form_changed}}</div>
+                <table id="table-damage"
+                       class="table"
+                       data-show-refresh="true"
+                       data-show-toggle="true"
+                       data-pagination="true"
+                       data-page-list="{{#with dataPageList}}{{dataPageList}}{{/with}}"
+                       data-locale="en-US"
+                       data-search="true"
+                       data-show-export="true"
+                       data-toolbar="#toolbar">
+                    <thead>
+                        <tr>
+                            <th data-field="created" data-sortable="true" data-filter-control="input"  data-sorter="dateSorter">Ημερομηνία</th>
+                            <th data-field="descriptionType" data-align="center" data-sortable="true" data-filter-control="select">Τύπος</th>
+                            <th data-field="descriptionDepartment" data-sortable="true">Τμήμα</th>
+                            <th data-field="descriptionMachine" data-sortable="true">Μηχανή</th>
+                            <th data-field="descriptionUser" data-sortable="true">Χρήστης</th>
+                            <th data-field="descriptionCause" data-sortable="true">Αιτία</th>
+                            <th data-field="descriptionSubcause" data-sortable="true">Δευτερεύουσα Αιτία</th>
+                            <th data-field="minuteDuration" data-align="right" data-sortable="true" data-sorter="durationSorter">Διάρκεια</th>
+                            <th data-field="note" data-sortable="true">Σχόλιο</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="damage-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{damage.title}}</h4>
+                </div>
+                <div class="modal-body">
+                    <label for="created">Hμερομηνία</label>
+                    <input type="text" id="created-modal" value="{{damage.created}}" readonly/>
+                    <label for="type">Τύπος</label>
+                    <input type="text" id="type-modal" value="{{damage.descriptionType}}" readonly/>
+                    <label for="department">Τμήμα</label>
+                    <input type="text" id="department-modal" value="{{damage.descriptionDepartment}}" readonly/>
+                    <label for="machine">Μηχανή</label>
+                    <input type="text" id="machine-modal" value="{{damage.descriptionMachine}}" readonly/>
+                    <label for="duration">Διάρκεια</label>
+                    <input type="text" style="width: 100%" id="duration-modal" value="{{damage.minuteDuration}}'" readonly/>
+                    <label for="cause">Αιτία</label>
+                    {{#if Preservative}}
+                    {{#if hasCause damage.descriptionCause}}
+                    <input type="text" style="width: 100%" value="{{damage.descriptionCause}}" readonly/>
+                    {{else}}
+                    <select id="cause-modal">
+                        {{#each causes}}
+                        <option value="{{id}}">{{description}}</option>
+                        {{/each}} 
+                    </select>
+                    {{/if}}
+                    {{else}}
+                    <input type="text" style="width: 100%" value="{{damage.descriptionCause}}" readonly/>
+                    {{/if}}
+                    <label for="subcause">Δευτερεύουσα Αιτία</label>
+                    {{#if Preservative}}
+                    {{#if hasSubcause damage.descriptionSubcause}}
+                    <input type="text" style="width: 100%" value="{{damage.descriptionSubcause}}" readonly/>
+                    {{else}}
+                    <select id="subcause-modal">
+                        {{#each subcauses}}
+                        <option value="{{id}}">{{description}}</option>
+                        {{/each}} 
+                    </select>
+                    {{/if}}
+                    {{else}}
+                    <input type="text" style="width: 100%" value="{{damage.descriptionSubcause}}" readonly/>
+                    {{/if}}
+                    <label for="user">Χρήστης</label>
+                    {{#if Preservative}}
+                    {{#if hasUser damage.user}}
+                    <input type="text" value="{{damage.descriptionUser}}" readonly/>
+                    {{else}}
+                    <select id="user-modal">
+                        <option value="0">Επέλεξε Χρήστη</option>
+                        {{#each users}}
+                        <option value="{{id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    {{/if}}
+                    {{else}}
+                    <input type="text" style="width: 100%" value="{{damage.descriptionUser}}" readonly/>
+                    {{/if}}
+                    <label for="note">Σχόλιο</label>
+                    <textarea rows="5" style="width: 100%" id="note-modal" value="{{damage.note}}" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    {{#if PAdmin}}
+                    <button type="button" class="btn btn-primary" id="update" data-id="{{damage.id}}">Διόρθωση</button>
+                    <button type="button" class="btn btn-primary" id="delete" data-id="{{damage.id}}">Διαγραφή</button>
+                    <button type="button" class="btn btn-primary" id="restore" data-id="{{damage.id}}">Επαναφορά</button>
+                    <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
+                    {{else if PUser}}
+                    <button type="button" class="btn btn-primary" id="edit" data-id="{{damage.id}}">Διόρθωση</button>
+                    <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
+                    {{else}}
+                    <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

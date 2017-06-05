@@ -1,0 +1,31 @@
+<template name="Home">
+    <div id="container">
+        {{> Nav}}
+        <div class="content">
+            {{#each homeDepartments}}
+            <div class="btn" id="department" data-id="{{id}}">
+                <span id="department1" data-id="{{id}}" style="color: coral">{{description}}</span><br/>
+                <span style="color: brown">{{causes}}</span><br/>
+                <div class="btn" id="department-menu-{{id}}" style="display: none">
+                    <ul style="list-style-type: none;">
+                        <li><a class="item" href="{{search}}" data-id="2">Reporting</a></li>
+                        <li><a class="item" href="{{pareto}}" data-id="3">Pareto Ανάλυση</a></li>
+                    </ul>
+                </div>
+            </div>
+            {{/each}}<p></p>
+            {{#each machines}}
+            <div class="btn">
+                <span id="machine" data-id="{{id}}" style="color: coral">{{code}}</span><br/>
+                <span style="color: brown">{{causes}}</span><br/>
+                <div class="btn" id="machine-menu-{{id}}" style="display: none">
+                    <ul style="list-style-type: none;">
+                        <li><a class="item" href="{{search}}" data-id="2">Reporting</a></li>
+                        <li><a class="item" href="{{pareto}}" data-id="3">Pareto Ανάλυση</a></li>
+                    </ul>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</template>

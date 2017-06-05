@@ -1,0 +1,139 @@
+<template name="InsertRefDamage">
+    <script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>
+    <style type="text/css">
+        .control-group.center{ float:none;margin:0 auto;width:400px;margin-bottom:20px;}
+        .control-group .field {width:100px;float:left}
+        .control-group .l {width:300px;float:left;line-height: 29px;}
+        .row-fluid .offset4{
+            display: block!important;
+            float: none!important;
+            width: 100%!important;
+            margin-left: 0!important;
+            padding:0 80px;
+        }
+        @media (max-width: 497px){
+            .control-group.center {text-align: center;float:inherit;width: auto}
+            .control-group .field,.control-group .l {width:120px;float:none;text-align: center;width: auto}
+        }
+        #insert-damage-form .has-error .control-label,
+        #insert-damage-form .has-error .help-block,
+        #insert-damage-form .has-error .form-control-feedback {
+            color: #f39c12;
+        }
+
+        #insert-damage-form .has-success .control-label,
+        #insert-damage-form .has-success .help-block,
+        #insert-damage-form .has-success .form-control-feedback {
+            color: #18bc9c;
+        }
+        .table thead th {
+            color: white;
+            background-color: black;
+        }
+        .table tbody tr {
+            background-color: #18bc9c;
+        }
+        .table tbody tr:hover {
+            background-color: #62309a;
+        }
+        .table tbody td a {
+            color: blueviolet;
+        }
+        .table tbody td a:hover {
+            color: blue;
+        }
+        .pull-right {
+            margin-right: 10px;
+        }
+    </style>
+    <div id="container">
+        {{> Nav}}
+        <div class="content" style="width:100%">
+            <div class="cmmsform" style="width:600px">
+                <form id="insert-ref-cause" class="form-horizontal" method="post">
+                    <div class="control-group center">
+                        <h3>Επεξεργασία Δέτρων Βλαβών</h3>
+                    </div>
+                    <div class="form-group control-group center">
+                        <select name="department" id="department" required>
+                            <option value="-1">Επέλεξε Τμήμα</option>
+                            {{#each departments}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group control-group center">
+                        <select name="type" id="type" required>
+                            <option value="-1">Επέλεξε Τύπο Αιτίας</option>
+                            {{#each refDamageTypes}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group control-group center">
+                        <select name="cause" id="cause" required>
+                            <option value="-1">Επέλεξε Αιτία</option>
+                            {{#each causes}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                        <button id="btn-new-cause" class="btn btn-primary btn-xs">Νέα Αιτία</button>
+                    </div>
+                    <div class="form-group control-group center">
+                        <input type="text" id="subcause" style="width: 205px" placeholder="Δευτερεύουσα Αιτία" required>
+                    </div>
+                    <div id="toolbar" class="btn-group">
+                        <input type="submit" value="Εισαγωγή" class="btn btn-primary btn-block btn-large">
+                    </div>
+                    <table id="table"
+                           class="table"
+                           data-pagination="true"
+                           data-page-list="{{#with dataPageList}}{{dataPageList}}{{/with}}"
+                           data-locale="en-US"
+                           data-search="true"
+                           data-toolbar="#toolbar">
+                        <thead>
+                            <tr>
+                                <th data-field="department" data-filter-control="input">Τμήμα</th>
+                                <th data-field="type" data-filter-control="input">Τύπος</th>
+                                <th data-field="cause" data-filter-control="input">Αιτία</th>
+                                <th data-field="subcause" data-filter-control="input">Δευτερεύουσα Αιτία</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cause-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="cause-modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-primary" id="delete" data-id="{{subcauseId}}">Διαγραφή</button>
+                    <button type="button" class="btn btn-primary" id="update" data-id="{{subcauseId}}">Διόρθωση</button>
+                    <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="new-cause-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="new-cause-modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group control-group center">
+                        <input type="text" id="new-cause" style="width: 400px" placeholder="Αιτία" required>
+                    </div>
+                    <div class="form-group control-group center">
+                        <button type="button" class="btn btn-primary" id="insert">Εισαγωγή</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

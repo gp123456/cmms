@@ -1,0 +1,13 @@
+{
+    "public": {
+        "staleSessionInactivityTimeout": 1800000,
+        "staleSessionHeartbeatInterval": 180000,
+        "staleSessionPurgeInterval": 60000,
+        "staleSessionActivityEvents": "mousemove click keydown",
+        "persistent_session": {
+            "default_method": "persistent"
+        }
+    },
+    "backendURL": "http://localhost:8080",
+    "restApiTimeout": 30000
+}

@@ -1,0 +1,28 @@
+<template name="Login">
+    <style type="text/css">
+        #login-form .has-error .control-label,
+        #login-form .has-error .help-block,
+        #login-form .has-error .form-control-feedback {
+            color: #f39c12;
+        }
+
+        #login-form .has-success .control-label,
+        #login-form .has-success .help-block,
+        #login-form .has-success .form-control-feedback {
+            color: #18bc9c;
+        }
+    </style>
+    <div class="cmmsform">
+        <h3>Σύνδεση</h3>
+        <form id="login-form" method="post">
+            <div class="form-group">
+                <input type="text"  id="username" name="username" placeholder="Όνομα Χρήστη" required="required" />
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" name="password" placeholder="Κωδικό Χρήστη" required="required" />
+            </div>
+            <button type="submit" id="sb-login" class="btn btn-primary btn-block btn-large">Είσοδος</button>
+            <!--<a class="btn btn-primary btn-sm btn-block" href="{{pathFor route='register'}}">Εγγραφή Νέου Χρήστη</a>-->
+        </form>
+    </div>
+</template>

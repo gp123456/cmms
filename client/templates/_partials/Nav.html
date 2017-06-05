@@ -1,0 +1,32 @@
+<template name="Nav">
+    {{> Header}}
+    {{#if PAdmin}}
+    <div class="ui five item menu">
+        <a class="active item" href="home" id="menu-1" data-id="1">Εμφάνιση Μηχανών</a>
+        <a class="item" href="search-damage" id="menu-2" data-id="2">Reporting</a>
+        <a class="item" href="pareto" id="menu-3" data-id="3">Pareto Ανάλυση</a>
+        <a class="item" href="insert-refdamage" id="menu-4" data-id="4">Επεξ. Δέντρων Βλαβών</a>
+        <!--<a class="item" href="insert-department" id="menu-5" data-id="5">Εισαγωγή Τμήματος</a>-->
+        <!--<a class="item" href="insert-machine" id="menu-6" data-id="6">Εισαγωγή Μηχανής</a>-->
+        <a class="item" href="register" id="menu-5" data-id="5">Διαχείριση Χρηστών</a>
+        <!--<a class="item" href="insert-cause" id="menu-8" data-id="8">Εισαγωγή Νέας Αιτίας</a>-->
+    </div>
+    {{else if PUser}}
+    <div class="ui four item menu">
+        <a class="item" href="home" id="menu-1" data-id="1">Εμφάνιση Μηχανών</a>
+        <a class="item" href="search-damage" id="menu-2" data-id="2">Reporting</a>
+        <a class="item" href="pareto" id="menu-3" data-id="3">Pareto Ανάλυση</a>
+        <!--<a class="item" href="insert-damage" id="menu-2" data-id="2">Εισαγωγή Αιτίας</a>-->
+    </div>
+    {{else if DAdmin}}
+    <div class="ui four item menu">
+        <a class="item" href="home" id="menu-1" data-id="1">Εμφάνιση Μηχανών</a>
+        <!--<a class="item" href="search-damage" id="menu-3" data-id="3">Προβολή Αιτιών [{{#each navDepartments}}{{description}}{{/each}}]</a>-->
+        <a class="item" href="search-damage" id="menu-2" data-id="2">Reporting</a>
+        <!--<a class="item" href="pareto" id="menu-4" data-id="4">Pareto Ανάλυση [{{#each navDepartments}}{{description}}{{/each}}]</a>-->
+        <a class="item" href="pareto" id="menu-3" data-id="3">Pareto Ανάλυση</a>
+        <!--<a class="item" href="insert-damage" id="menu-2" data-id="2">Εισαγωγή Αιτίας [{{#each navDepartments}}{{description}}{{/each}}]</a>-->
+    </div>
+    {{else if OUser}}
+    {{/if}}
+</template>

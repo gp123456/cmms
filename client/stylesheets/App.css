@@ -1,0 +1,133 @@
+/* CSS declarations go here */
+body {
+    background: url("images/bodybg.jpg");
+    padding: 20px;
+}
+
+#container {
+    width:100%;
+    /*overflow:hidden;*/
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -webkit-border-radius:5px;
+    -moz-box-shadow: 0px 0px 10px #000;
+}
+
+.leftmenucontainer {
+    width: 15%;
+}
+
+.top-bar {
+    background: white;
+    border-bottom: 4px solid red;
+    height: 60px;
+    font-size: 12px;
+    width: 100%;
+}
+
+.top-bar .logo {
+    float: left;
+    width: 12%;
+    background: url('images/bic-logo.jpg') no-repeat left;
+    height: 100%;
+}
+
+.top-bar .version {
+    float: left;
+    width: 60%;
+    margin-top: 25px;
+    font-size: 10px;
+    color: black;
+    padding: 10px;
+}
+
+#userHead {
+    position: relative;
+    height: 100%;
+    width: 25%;
+    float: left;
+    border-left: groove 2px #3c3c3c;
+    font-size: 13px;
+    color: black;
+}
+
+#userHead .loginInfo {
+    position: relative;
+}
+
+#userHead .loginInfo div {
+    display: inline;
+    position: relative;
+    top: 10px;
+    padding:  5px 
+}
+
+#userHead .logout {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+
+.nav a {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    color: white;
+    border: 1px solid blue;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .2);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.active a {
+    background-color: rgba(0,0,0,1);
+}
+
+.content {
+    padding-left: 30px;
+}
+
+.error {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.error-code {
+    bottom: 60%;
+    color: #2d353c;
+    font-size: 96px;
+    line-height: 100px;
+}
+
+.error-desc {
+    font-size: 12px;
+    color: #647788;
+}
+
+.m-b-10 {
+    margin-bottom: 10px!important;
+}
+
+.m-b-20 {
+    margin-bottom: 20px!important;
+}
+
+.m-t-20 {
+    margin-top: 20px!important;
+}
+
+.loading-message {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 300;
+    font-family: sans-serif;
+}
+
+.sk-spinner-rotating-plane.sk-spinner {
+    background-color: #fff;
+}
+
+.centered-form .panel{
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
+}
