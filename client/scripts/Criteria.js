@@ -94,16 +94,6 @@ Template.Criteria.rendered = function () {
         format: "YYYY-MM-DD HH:mm:ss",
         sideBySide: true
     });
-    initMultiselect($("#type-criteria"), "Επέλεξε Τύπο(ους) αιτίας(ιών)", "240px");
-    if (Router.current().originalUrl.search("pareto") === -1) {
-        initMultiselect($("#cause-criteria"), "Επέλεξε Αιτία(ίες)", "240px");
-        initMultiselect($("#subcause-criteria"), "Επέλεξε Δευτερεύουσα(ες) Αιτία(ίες)", "340px");
-    } else {
-        initMultiselect($("#cause-criteria"), "Επέλεξε Αιτία(ίες)", "340px");
-    }
-    initMultiselect($("#department-criteria"), "Επέλεξε Τμήμα(τα)", "240px");
-    initMultiselect($("#machine-criteria"), "Επέλεξε Μηχανή(ές)", "340px");
-    initMultiselect($("#user-criteria"), "Επέλεξε Χρήστη(ες)", "340px");
     var user = Session.get("user");
 
     if (user) {
@@ -158,6 +148,16 @@ Template.Criteria.rendered = function () {
                 data.fv.revalidateField("toCriteria");
             }
         });
+        initMultiselect($("#type-criteria"), "Επέλεξε Τύπο(ους) αιτίας(ιών)", "240px");
+        if (Router.current().originalUrl.search("pareto") === -1) {
+            initMultiselect($("#cause-criteria"), "Επέλεξε Αιτία(ίες)", "240px");
+            initMultiselect($("#subcause-criteria"), "Επέλεξε Δευτερεύουσα(ες) Αιτία(ίες)", "340px");
+        } else {
+            initMultiselect($("#cause-criteria"), "Επέλεξε Αιτία(ίες)", "340px");
+        }
+        initMultiselect($("#department-criteria"), "Επέλεξε Τμήμα(τα)", "240px");
+        initMultiselect($("#machine-criteria"), "Επέλεξε Μηχανή(ές)", "340px");
+        initMultiselect($("#user-criteria"), "Επέλεξε Χρήστη(ες)", "340px");
     }
 };
 

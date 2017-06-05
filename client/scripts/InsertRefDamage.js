@@ -112,7 +112,7 @@ Template.InsertRefDamage.rendered = function () {
         Session.set("completeCause", null);
         getDepartments(user.id);
         getCauseType(ct);
-        getCause(null, null, null, false);
+        getCause(user.id, null, null, false);
         getCompleteCause(null);
         $("#insert-ref-cause").bootstrapValidator({
             feedbackIcons: {
@@ -207,45 +207,70 @@ Template.InsertRefDamage.helpers({
 
 Template.InsertRefDamage.events({
     "click #cancel": function (e) {
+        e.preventDefault();
+        
+        $("#edit-cause-fields").hide();
+        $("#edit-subcause-fields").hide();
         $("#cause-modal").modal("hide");
     },
     "click #delete": function (e) {
+        e.preventDefault();
+        
         var causeId = Session.get("causeId");
         var subcauseId = Session.get("subcauseId");
-        
+
         if (causeId) {
             deleteCause(causeId);
         } else if (subcauseId) {
             deleteSubcause(subcauseId);
         }
-        
+
+        $("#edit-cause-fields").hide();
+        $("#edit-subcause-fields").hide();
         $("#cause-modal").modal("hide");
     },
     "click #update": function (e) {
-        var causeId = Session.get("causeId");
+        e.preventDefault();
+        
+        if (!$("#edit-cause-fields").is(':visible')) {
+            var causeId = Session.get("causeId");
+            var subcauseId = Session.get("subcauseId");
 
-        if (causeId) {
-            $("#department select").val();
+            if (causeId) {
+                $("#edit-cause-fields").show();
+            } else if (subcauseId) {
+                $("#edit-subcause-fields").show();
+            }
+        } else {
+            $("#edit-cause-fields").hide();
+            $("#edit-subcause-fields").hide();
+            $("#cause-modal").modal("hide");
         }
-        $("#cause-modal").modal("hide");
     },
     "click .cause-modify": function (e) {
+        e.preventDefault();
+        
         var causeId = e.target.getAttribute("data-id");
         Session.set("causeId", causeId);
         Session.set("subcauseId", null);
 
-        $("#cause-modal-title").text("Επέλεξε μια λειτουγία για την βλάβη:" + $("#cause-modify" + causeId).text());
+        $("#cause-modal-title").text($("#cause-modify" + causeId).text());
         $("#cause-modal").modal("show");
     },
     "click .subcause-modify": function (e) {
+        e.preventDefault();
+        
         var subcauseId = e.target.getAttribute("data-id");
+        var causeId = Session.get("causeId");
+
+        $("#cause-modal-title").text($("#cause-modify" + causeId).text() + "/" + $("#subcause-modify" + subcauseId).text());
         Session.set("causeId", null);
         Session.set("subcauseId", subcauseId);
-
-        $("#cause-modal-title").text("Επέλεξε μια λειτουγία για την βλάβη:" + $("#subcause-modify" + subcauseId).text());
         $("#cause-modal").modal("show");
     },
     "click #btn-new-cause": function (e) {
+        e.preventDefault();
+        
         var department = $("#department option:selected").val();
         var type = $("#type option:selected").val();
 
@@ -269,6 +294,8 @@ Template.InsertRefDamage.events({
         }
     },
     "click #insert": function (e) {
+        e.preventDefault();
+        
         var refCause = {
             department: Number($("#department option:selected").val()),
             cause: $("#new-cause").val(),
@@ -278,5 +305,45 @@ Template.InsertRefDamage.events({
 
         insertCause(refCause);
         $('#new-cause-modal').modal("hide");
+    },
+    "change #department": function(e) {
+        e.preventDefault();
+        
+        var department = Number($("#department option:selected").val());
+        var departments = (department !== -1) ? [department] : null;
+        var type = Number($("#type option:selected").val());
+        var types = (type !== -1) ? [type] : null;
+        var user = Session.get("user");
+        
+        Session.set("causes", null);
+        if (departments && types) {
+            getCause(null, types, departments, false);
+        } else if (types) {
+            getCause(null, types, null, false);
+        } else if (departments) {
+            getCause(null, null, departments, false);
+        } else {
+            getCause(user.id, null, null, false);
+        }
+    },
+    "change #type": function(e) {
+        e.preventDefault();
+        
+        var department = Number($("#department option:selected").val());
+        var departments = (department !== -1) ? [department] : null;
+        var type = Number($("#type option:selected").val());
+        var types = (type !== -1) ? [type] : null;
+        var user = Session.get("user");
+        
+        Session.set("causes", null);
+        if (departments && types) {
+            getCause(null, types, departments, false);
+        } else if (types) {
+            getCause(null, types, null, false);
+        } else if (departments) {
+            getCause(null, null, departments, false);
+        } else {
+            getCause(user.id, null, null, false);
+        }
     }
 });

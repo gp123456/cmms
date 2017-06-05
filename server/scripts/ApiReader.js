@@ -236,12 +236,13 @@ Meteor.methods({
         self.unblock();
 
         try {
-            var apiUrl = (department)
+            var apiUrl = 
+                    (type && department)
+                    ? Meteor.settings.backendURL + "/cause/type-department?type=" + type + "&department=" + department
+                    : (department)
                     ? apiUrl = Meteor.settings.backendURL + "/cause/department?id=" + department
                     : (type && user)
                     ? apiUrl = Meteor.settings.backendURL + "/cause/type-user?type=" + type + "&user=" + user
-                    : (type && department)
-                    ? Meteor.settings.backendURL + "/cause/type-department?type=" + type + "&department=" + department
                     : (type)
                     ? Meteor.settings.backendURL + "/cause/type?id=" + type
                     : (user)

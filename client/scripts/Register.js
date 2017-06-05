@@ -1,9 +1,15 @@
 /* global Router, Meteor, Session, Template */
 
 function registerUser() {
+    var departments = [];
+    $("#department option:selected").each(function (index, value) {
+        departments.push(Number($(this).val()));
+    });
+
     var user = {
-        department: $("#department option:selected").val(),
+        departments: departments,
         type: $("#type option:selected").val(),
+        id: $("#id").val(),
         name: $("#name").val(),
         username: $("#username").val(),
         password: $("#password").val()
@@ -50,7 +56,7 @@ Template.Register.rendered = function () {
         Session.set("departments", null);
         getDepartments(user.id);
         getUserType();
-        initMultiselect($("#department"), "Επέλεξε Τμήμα(τα)");
+        initMultiselect($("#department"), "Επέλεξε Τμήμα(τα)", "340px");
 
         $("#register").bootstrapValidator({
             feedbackIcons: {

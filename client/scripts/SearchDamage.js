@@ -106,7 +106,7 @@ function getDamage(id) {
     })
 }
 
-Template.SearchDamage.rendered = function () {
+Template.SearchDamage.on = function () {
     var user = Session.get("user");
 
     if (user) {
@@ -120,10 +120,6 @@ Template.SearchDamage.rendered = function () {
         Router.go("Login");
     }
 };
-
-Template.SearchDamage.onCreated(function () {
-//    Blaze.render();
-});
 
 Template.SearchDamage.helpers({
     "damages": function () {

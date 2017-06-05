@@ -111,6 +111,40 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="cause-modal-title"></h4>
                 </div>
+                <div id="edit-cause-fields" style="display: none">
+                    <div class="form-group control-group center">
+                        <select name="edit-department" id="edit-department" required>
+                            <option value="-1">Επέλεξε Τμήμα</option>
+                            {{#each departments}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group control-group center">
+                        <select name="edit-type" id="edit-type">
+                            <option value="-1">Επέλεξε Τύπο Αιτίας</option>
+                            {{#each refDamageTypes}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                        <div class="form-group control-group center">
+                            <input type="text" id="edit-cause" placeholder="Περιγραφή">
+                        </div>
+                    </div>
+                </div>
+                <div id="edit-subcause-fields" style="display: none">
+                    <div class="form-group control-group center">
+                        <select name="edit-cause" id="cause" required>
+                            <option value="-1">Επέλεξε Αιτία</option>
+                            {{#each causes}}
+                            <option value="{{id}}">{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group control-group center">
+                        <input type="text" id="edit-subcause" placeholder="Περιγραφή">
+                    </div>
+                </div>
                 <div class="modal-body">
                     <button type="button" class="btn btn-primary" id="delete" data-id="{{subcauseId}}">Διαγραφή</button>
                     <button type="button" class="btn btn-primary" id="update" data-id="{{subcauseId}}">Διόρθωση</button>
