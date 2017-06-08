@@ -274,6 +274,10 @@ function awesomeChartDraw(name, type, title, labels, data) {
 }
 
 getPareto = function getPareto(userId, criteria) {
+    var FusionCharts = require("fusioncharts");
+    require("fusioncharts/fusioncharts.charts")(FusionCharts);
+    require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
+
     Meteor.call(
             'getPareto',
             userId,
@@ -284,31 +288,78 @@ getPareto = function getPareto(userId, criteria) {
                 try {
                     if (response) {
                         var info = JSON.parse(response);
-
+                        
+                        console.log(info);
+                        
                         if (info) {
-                            var labels = [];
-                            var data = [];
+                            var categories = [];
+                            var delays = [];
+                            var percents = [];
 
                             info.paretos.forEach(function (pareto) {
                                 if (pareto.label) {
-                                    labels.push(pareto.label);
-                                    data.push(pareto.damages);
+                                    categories.push({"label": pareto.label});
+                                    delays.push({"value": pareto.delay});
+                                    percents.push({"value": pareto.percent});
                                 }
                             });
 
-                            var pareto = {
-                                description: info.department,
-                                mttr: info.mttr,
-                                mtbf: info.mtbf
-                            };
-
-                            Session.set("pareto", pareto);
-
-                            awesomeChartDraw("canvas1", "pareto", "MTTR:" + info.mttr + "min / MTBF:" + info.mtbf + "min", labels, data);
+                            new FusionCharts({
+                                "type": "mscolumnline3d",
+                                "width": "1300",
+                                "height": "800",
+                                "dataFormat": "json",
+                                "dataSource": {
+                                    "chart": {
+                                        "showvalues": "0",
+                                        "caption": "Pareto Analysis",
+                                        "subcaption":
+                                                "Περίοδος: " +
+                                                criteria.from +
+                                                " - " +
+                                                criteria.to +
+                                                " - MTTR(ώρες): " +
+                                                info.mttr +
+                                                " - MTTBF(ώρες): " +
+                                                info.mtbf,
+                                        "numberprefix": "",
+                                        "yaxisname": "Ώρες καθυστέρησης",
+                                        "showborder": "0",
+                                        "bgcolor": "#ffffff",
+                                        "canvasbgcolor": "#ffffff",
+                                        "captionfontsize": "18",
+                                        "subcaptionfontsize": "14",
+                                        "subcaptionfontbold": "0",
+                                        "divlinecolor": "#999999",
+                                        "divlineisdashed": "1",
+                                        "divlinedashlen": "1",
+                                        "divlinegaplen": "1",
+                                        "tooltipcolor": "#ffffff",
+                                        "tooltipborderthickness": "0",
+                                        "tooltipbgcolor": "#000000",
+                                        "tooltipbgalpha": "80",
+                                        "tooltipborderradius": "2",
+                                        "tooltippadding": "5",
+                                        "legendbgcolor": "#ffffff",
+                                        "legendborderalpha": "0",
+                                        "legendshadow": "0",
+                                        "legenditemfontsize": "10",
+                                        "legenditemfontcolor": "#666666",
+                                        "exportEnabled": "1",
+                                        "exportAtClientSide": "1",
+                                        "labelDisplay": "auto"
+                                    },
+                                    "categories": [{"category": categories}],
+                                    "dataset": [
+                                        {"seriesname": "Ώρες καθυστέρησης", "showvalues": "1", "data": delays},
+                                        {"seriesname": "Ποσοστό επί του συνόλου", "renderas": "Line", "showvalues": "1", "data": percents}
+                                    ]
+                                }
+                            }).render("chartContainer");
                         }
                     }
                 } catch (error) {
-                    
+
                 }
             });
 }

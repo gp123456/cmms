@@ -77,7 +77,7 @@ function updateDamage(id) {
     Meteor.call('updateDamage', damage, function (error, response) {
         if (response) {
             swal({
-                title: "Η διόρθωση της βλάβης επέτυχε!",
+                title: "Η διόρθωση της βλάβης έγινε!",
                 text: response,
                 type: "success",
                 showCancelButton: false,
@@ -106,7 +106,7 @@ function getDamage(id) {
     })
 }
 
-Template.SearchDamage.on = function () {
+Template.SearchDamage.rendered = function () {
     var user = Session.get("user");
 
     if (user) {

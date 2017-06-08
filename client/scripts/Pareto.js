@@ -16,15 +16,3 @@ Template.Pareto.rendered = function () {
         Router.go("Login");
     }
 };
-
-Template.Pareto.helpers({
-    "pareto": function () {
-        var pareto = Session.get("pareto");
-        
-        if (pareto) {
-            return pareto;
-        }
-
-        return null;
-    }
-});

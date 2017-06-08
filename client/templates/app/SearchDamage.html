@@ -49,9 +49,9 @@
             <div class="row">
                 <div id="toolbar" class="btn-group">
                     <button id="export" class="btn btn-default">Εξαγωγή Excel</button>
-                    {{#if PAdmin}}
+<!--                    {{#if PAdmin}}
                     <button id="recycle" class="btn btn-default">Διαγραμμένες Αιτίες</button>
-                    {{/if}}
+                    {{/if}}-->
                 </div>
                 <div style="visibility:hidden;">{{form_changed}}</div>
                 <table id="table-damage"
@@ -151,7 +151,7 @@
                     <button type="button" class="btn btn-primary" id="restore" data-id="{{damage.id}}">Επαναφορά</button>
                     <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
                     {{else if PUser}}
-                    <button type="button" class="btn btn-primary" id="edit" data-id="{{damage.id}}">Διόρθωση</button>
+                    <button type="button" class="btn btn-primary" id="update" data-id="{{damage.id}}">Διόρθωση</button>
                     <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
                     {{else}}
                     <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
