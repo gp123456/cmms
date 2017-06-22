@@ -8,7 +8,7 @@
 
 function getDepartment(userId, userType) {
     if (userType === 4 || userType === 5 ) {
-        Meteor.call('getDepartments', userId, null, function (error, response) {
+        Meteor.call('getDepartments', userId, function (error, response) {
             try {
                 var departments = JSON.parse(response);
 

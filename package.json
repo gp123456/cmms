@@ -2,7 +2,7 @@
   "name": "cmms",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "node ..\/..\/Users\/gpatitakis\/AppData\/Local\/.meteor\/meteor.bat --settings settings.json"
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",

@@ -6,7 +6,9 @@ Meteor.methods({
 
         try {
             var apiUrl = (type)
-                    ? Meteor.settings.backendURL + "/user/type?id=" + type
+                    ? (type instanceof Array)
+                    ? Meteor.settings.backendURL + "/user/types?ids=" + type
+                    : Meteor.settings.backendURL + "/user/type?id=" + type
                     : (damage) ? Meteor.settings.backendURL + "/user/damage?id=" + damage : Meteor.settings.backendURL + "/user/all";
             var response = Meteor.wrapAsync(apiCallGet)(apiUrl);
 
@@ -132,6 +134,19 @@ Meteor.methods({
             console.log("getDepartments", error);
         }
     },
+    "getDepartment": function (department) {
+        var self = this;
+        self.unblock();
+
+        try {
+            var apiUrl = Meteor.settings.backendURL + "/department?id=" + department;
+            var response = Meteor.wrapAsync(apiCallGet)(apiUrl);
+
+            return response;
+        } catch (error) {
+            console.log("getDepartment", error);
+        }
+    },
     "getUserType": function () {
         var self = this;
         self.unblock();
@@ -179,9 +194,9 @@ Meteor.methods({
             var apiUrl = (criteria)
                     ? Meteor.settings.backendURL + "/damage/filter"
                     : (machine)
-                    ? Meteor.settings.backendURL + "/damage/machine?id=" + machine
+                    ? Meteor.settings.backendURL + "/damage/machine?id=" + machine + "&user=" + user
                     : (department)
-                    ? Meteor.settings.backendURL + "/damage/department?id=" + department
+                    ? Meteor.settings.backendURL + "/damage/department?id=" + department + "&user=" + user
                     : Meteor.settings.backendURL + "/damage/user?id=" + user;
             var response = (criteria) ? Meteor.wrapAsync(apiCallPost)(apiUrl, criteria) : Meteor.wrapAsync(apiCallGet)(apiUrl);
 
@@ -203,6 +218,19 @@ Meteor.methods({
             console.log("getDamage", error);
         }
     },
+    "getDeleteDamages": function (userId) {
+        var self = this;
+        self.unblock();
+
+        try {
+            var apiUrl = Meteor.settings.backendURL + "/damage/deleted?userId=" + userId;
+            var response = Meteor.wrapAsync(apiCallGet)(apiUrl);
+
+            return response;
+        } catch (error) {
+            console.log("getDeleteDamages", error);
+        }
+    },
     "getCauseType": function (ids) {
         var self = this;
         self.unblock();
@@ -216,12 +244,14 @@ Meteor.methods({
             console.log("getCauseType", error);
         }
     },
-    "getMachine": function (user, department) {
+    "getMachine": function (machine, department, user) {
         var self = this;
         self.unblock();
 
         try {
-            var apiUrl = (department)
+            var apiUrl = (machine)
+                    ? Meteor.settings.backendURL + "/machine?id=" + machine
+                    : (department)
                     ? Meteor.settings.backendURL + "/machine/department?id=" + department
                     : apiUrl = Meteor.settings.backendURL + "/machine/user?id=" + user;
             var response = Meteor.wrapAsync(apiCallGet)(apiUrl);
@@ -231,7 +261,7 @@ Meteor.methods({
             console.log("getMachine", error);
         }
     },
-    "getCause": function (user, department, type, damage) {
+    "getCause": function (user, type, department, damage) {
         var self = this;
         self.unblock();
 
@@ -257,12 +287,12 @@ Meteor.methods({
             console.log("getCause", error);
         }
     },
-    "getSubcause": function (cause) {
+    "getSubcause": function (causes) {
         var self = this;
         self.unblock();
 
         try {
-            var apiUrl = Meteor.settings.backendURL + "/subcause/cause?id=" + cause;
+            var apiUrl = Meteor.settings.backendURL + "/subcause/causes?id=" + causes;
 
             var response = (apiUrl) ? Meteor.wrapAsync(apiCallGet)(apiUrl) : null;
 
@@ -331,9 +361,9 @@ Meteor.methods({
             var apiUrl = (criteria)
                     ? Meteor.settings.backendURL + "/damage/pareto/filter"
                     : (machine)
-                    ? Meteor.settings.backendURL + "/damage/pareto/machine?id=" + machine
+                    ? Meteor.settings.backendURL + "/damage/pareto/machine?id=" + machine + "&user=" + user
                     : (department)
-                    ? Meteor.settings.backendURL + "/damage/pareto/departmentId?id=" + department
+                    ? Meteor.settings.backendURL + "/damage/pareto/departmentId?id=" + department + "&user=" + user
                     : Meteor.settings.backendURL + "/damage/pareto/department?user=" + user;
             var response = (criteria) ? Meteor.wrapAsync(apiCallPost)(apiUrl, criteria) : Meteor.wrapAsync(apiCallGet)(apiUrl);
 
@@ -417,7 +447,7 @@ apiCallGet = function (apiUrl, callback) {
 
 apiCallPost = function (apiUrl, data, callback) {
     try {
-        console.log("*** API CALL URL: " + apiUrl + ", data:" + data);
+        console.log("*** API CALL URL: " + apiUrl + ", data:" + JSON.stringify(data));
         Meteor.http.call("POST", apiUrl,
                 {
                     data: data,

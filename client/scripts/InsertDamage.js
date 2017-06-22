@@ -10,24 +10,22 @@ function insertDamage() {
     var user = Session.get("user");
 
     if (user) {
-        var subcauses = [];
-        subcauses.push({
-            id: Number($("#subcause option:selected").val())
-        });
+        var type = Number($("#type option:selected").val());
+        var created = $("#created").val();
+
         var damage = {
-            created: $("#created").val() + ".000",
-            user: user.id,
-            type: Number($("#type option:selected").val()),
-            cause: Number($("#cause option:selected").val()),
+            created: created,
+            user: (type !== 3) ? "0" : user.id,
+            type: type,
+            cause: (type !== 3) ? Number($("#subcause option:selected").val()) : Number($("#cause option:selected").val()),
             machine: Number($("#machine option:selected").val()),
-            duration: Number($("#duration").val()),
-            subcauses: subcauses
+            duration: Number($("#duration").val())
         };
 
         Meteor.call('insertDamage', damage, function (error, response) {
             if (response) {
                 swal({
-                    title: "Η εισαγωγή της αιτίας επέτυχε!",
+                    title: "Η εισαγωγή της αιτίας πέτυχε!",
                     text: response,
                     type: "success",
                     showCancelButton: false,
@@ -57,103 +55,49 @@ Template.InsertDamage.rendered = function () {
         Session.set("causes", null);
         Session.set("subcauses", null);
         getDepartments(user.id);
-        getMachine(user.id, null);
+        getMachine(null, null, user.id);
         getCauseType(null);
         getCause(user.id, null, null, true);
-        $("#insert-damage").bootstrapValidator({
-            feedbackIcons: {
-                valid: "glyphicon glyphicon-ok",
-                invalid: "glyphicon glyphicon-remove",
-                validating: "glyphicon glyphicon-refresh"
-            },
-            excluded: "disabled",
-            fields: {
-                machine: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε μηχανή"
-                        }
-                    }
-                },
-                type: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε τύπο αιτίας"
-                        }
-                    }
-                },
-                cause: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε κύρια αιτία"
-                        }
-                    }
-                },
-                subcause: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε αιτία"
-                        }
-                    }
-                },
-                operator: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε χειριστή"
-                        }
-                    }
-                },
-                preserver: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε συντηρητή"
-                        }
-                    }
-                },
-                created: {
-                    validators: {
-                        notEmpty: {
-                            message: "Επέλεξε ημερομηνία"
-                        }
-                    }
-                },
-                duration: {
-                    validators: {
-                        notEmpty: {
-                            message: "Δώσε δάρκεια βλάβης σε λεπτά"
-                        },
-                        integer: {
-                            message: "Δώσε μια πραγματική δάρκεια βλάβης σε λεπτά"
-                        },
-                        between: {
-                            min: 1,
-                            max: 1000,
-                            message: "Δώσε μια δάρκεια βλάβης σε λεπτά με εύρος από 1 μέχρι 1000"
-                        }
-                    }
-                }
-            }
-        }).on('success.form.bv', function (e) {
-            e.preventDefault(); // Prevent the form from submitting 
-
-            insertDamage();
-        });
     } else {
         Router.go("Login");
     }
 };
 
 Template.InsertDamage.helpers({
-    "departmentDescription": function () {
+    departments: function () {
         var departments = Session.get("departments");
 
         if (departments) {
-            return departments[0].description;
+            return departments;
         }
 
         return null;
     },
-    "machines": function () {
+    moreDepartment: function () {
+        var departments = Session.get("departments");
+
+        if (departments) {
+            return departments.length > 1;
+        }
+
+        return false;
+    },
+    departmentDescription: function () {
+        var departments = Session.get("departments");
+
+        if (departments) {
+            var output = "";
+
+            departments.forEach(function (department) {
+                output += department.description + " ";
+            });
+
+            return output;
+        }
+
+        return null;
+    },
+    machines: function () {
         var machines = Session.get("machines");
 
         if (machines) {
@@ -164,7 +108,7 @@ Template.InsertDamage.helpers({
 
         return null;
     },
-    "types": function () {
+    types: function () {
         var types = Session.get("types");
 
         if (types) {
@@ -175,7 +119,7 @@ Template.InsertDamage.helpers({
 
         return null;
     },
-    "causes": function () {
+    causes: function () {
         var causes = Session.get("causes");
 
         if (causes) {
@@ -186,7 +130,7 @@ Template.InsertDamage.helpers({
 
         return null;
     },
-    "subcauses": function () {
+    subcauses: function () {
         var subcauses = Session.get("subcauses");
 
         if (subcauses) {
@@ -197,7 +141,7 @@ Template.InsertDamage.helpers({
 
         return null;
     },
-    "operator": function () {
+    operator: function () {
         var operators = Session.get("operators");
 
         if (operators) {
@@ -208,7 +152,7 @@ Template.InsertDamage.helpers({
 
         return null;
     },
-    "preserver": function () {
+    preserver: function () {
         var preservers = Session.get("preservers");
 
         if (preservers) {
@@ -222,11 +166,27 @@ Template.InsertDamage.helpers({
 });
 
 Template.InsertDamage.events({
+    "change #department": function (e) {
+        e.preventDefault();
+
+        var department = $("#department option:selected").val();
+
+        if (department) {
+            getMachine(null, department, null);
+            getCause(null, null, department, true, null);
+        }
+
+    },
     "change #type": function (e) {
+        e.preventDefault();
+
         var user = Session.get("user");
         var type = $("#type option:selected").val();
+        var department = $("#department option:selected").val();
+        var types = [];
 
         if (user) {
+            types.push(type);
             if (parseInt(type) === 3) {
                 $("#subcause").removeAttr("required");
                 $("#subcause").prop("disabled", "disabled");
@@ -234,12 +194,106 @@ Template.InsertDamage.events({
             } else {
                 $("#subcause").removeAttr("disabled");
             }
-            getCause(user.id, type, null, true);
+            if (department) {
+                getCause(null, types, department, (type !== 3) ? true : false, null);
+            } else {
+                getCause(user.id, types, null, (type !== 3) ? true : false, null);
+            }
+
         }
     },
     "change #cause": function (e) {
+        e.preventDefault();
+
         if (parseInt($("#type option:selected").val()) !== 3) {
-            getSubcause($("#cause option:selected").val());
+            var causes = [];
+
+            causes.push($("#cause option:selected").val());
+            getSubcause(causes);
         }
+    },
+    "submit #insert-damage": function (e) {
+        e.preventDefault();
+
+        var target = event.target;
+        var department = target.department.value;
+        var machine = target.machine.value;
+        var type = target.type.value;
+        var cause = target.cause.value;
+        var subcause = target.subcause.value;
+        var created = target.created.value;
+        var duration = target.duration.value;
+        
+        if (department == -1) {
+            swal({
+                title: "Έλεγχος τμήματος",
+                text: "Πρέπει να επιλέξεις τμήμα",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (machine == -1) {
+            swal({
+                title: "Έλεγχος μηχανής",
+                text: "Πρέπει να επιλέξεις μηχανή",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (type == -1) {
+            swal({
+                title: "Έλεγχος Τύπου Αιτίας",
+                text: "Πρέπει να επιλέξεις έναν τύπο αιτίας",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (cause == -1) {
+            swal({
+                title: "Έλεγχος Κύριας Αιτίας",
+                text: "Πρέπει να επιλέξεις μια κύρια αιτία",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (type != 3 && subcause == -1) {
+            swal({
+                title: "Έλεγχος Αιτίας",
+                text: "Πρέπει να επιλέξεις μια αιτία",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (created == "") {
+            swal({
+                title: "Έλεγχος Ημερομηνίας",
+                text: "Πρέπει να επιλέξεις μια ημερομηνία",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        if (duration == "" || duration < 0) {
+            swal({
+                title: "Έλεγχος Διάρκειας",
+                text: "Πρέπει να δώσεις μια θετική διάρκεια σε λεπτά",
+                type: "warning",
+                showCancelButton: false,
+            });
+            
+            return;
+        }
+        insertDamage();
     }
 });

@@ -1,5 +1,5 @@
 <template name="InsertRefDamage">
-    <script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>
+    <!--<script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>-->
     <style type="text/css">
         .control-group.center{ float:none;margin:0 auto;width:400px;margin-bottom:20px;}
         .control-group .field {width:100px;float:left}
@@ -112,37 +112,37 @@
                     <h4 class="modal-title" id="cause-modal-title"></h4>
                 </div>
                 <div id="edit-cause-fields" style="display: none">
-                    <div class="form-group control-group center">
+<!--                    <div class="form-group control-group center">
                         <select name="edit-department" id="edit-department" required>
                             <option value="-1">Επέλεξε Τμήμα</option>
                             {{#each departments}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
                         </select>
-                    </div>
+                    </div>-->
                     <div class="form-group control-group center">
-                        <select name="edit-type" id="edit-type">
+<!--                        <select name="edit-type" id="edit-type">
                             <option value="-1">Επέλεξε Τύπο Αιτίας</option>
                             {{#each refDamageTypes}}
                             <option value="{{id}}">{{name}}</option>
                             {{/each}}
-                        </select>
+                        </select>-->
                         <div class="form-group control-group center">
-                            <input type="text" id="edit-cause" placeholder="Περιγραφή">
+                            <input type="text" id="edit-cause" placeholder="Νέα Περιγραφή">
                         </div>
                     </div>
                 </div>
                 <div id="edit-subcause-fields" style="display: none">
-                    <div class="form-group control-group center">
+<!--                    <div class="form-group control-group center">
                         <select name="edit-cause" id="cause" required>
                             <option value="-1">Επέλεξε Αιτία</option>
                             {{#each causes}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
                         </select>
-                    </div>
+                    </div>-->
                     <div class="form-group control-group center">
-                        <input type="text" id="edit-subcause" placeholder="Περιγραφή">
+                        <input type="text" id="edit-subcause" placeholder="Νέα Περιγραφή">
                     </div>
                 </div>
                 <div class="modal-body">

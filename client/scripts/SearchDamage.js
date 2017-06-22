@@ -6,91 +6,121 @@
 
 /* global Router, Template, Session, Meteor, moment, Npm, MyAppExporter */
 
-function restoreDamage(id) {
-    swal({
-        title: "Να προχωρήσω στην επαναφορά;",
-        text: "Θα επανέρθει η αιτία: '" + $("#cause-modal").val() + "' και όλες οι δευτερεύουσες αιτίες αυτής!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Ναι, Επανέφερέ το!",
-        closeOnConfirm: false
-    }, function () {
-        Meteor.call('restoreDamage', id, function (error, response) {
-            if (response) {
-                swal({
-                    title: "Η Επαναφορά της βλάβης επέτυχε!",
-                    text: response,
-                    type: "success",
-                    showCancelButton: false,
-                });
-            } else {
-                swal({
-                    title: "Η Επαναφορά της βλάβης απέτυχε!",
-                    text: error,
-                    type: "warning",
-                    showCancelButton: false,
-                });
-            }
+function restoreDamage(id, name) {
+    var user = Session.get("user");
+
+    if (user) {
+        swal({
+            title: "Να προχωρήσω στην επαναφορά;",
+            text: "Θα επανέρθει η βλάβη: '" + name + "'!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Ναι, Επανέφερέ το!",
+            closeOnConfirm: false
+        }, function () {
+            Meteor.call('restoreDamage', id, function (error, response) {
+                if (response) {
+                    swal({
+                        title: "Η Επαναφορά της βλάβης πέτυχε!",
+                        text: response,
+                        type: "success",
+                        showCancelButton: false,
+                    });
+
+                    var criteria = Session.get("criteria");
+
+                    if (criteria) {
+                        getDamages("getDamages", null, criteria);
+                    } else {
+                        getDamages("getDamages", user.id, null);
+                    }
+                } else {
+                    swal({
+                        title: "Η Επαναφορά της βλάβης απέτυχε!",
+                        text: error,
+                        type: "warning",
+                        showCancelButton: false,
+                    });
+                }
+            });
         });
-    });
+    }
 }
 
 function deleteDamage(id) {
-    swal({
-        title: "Να προχωρήσω στην διαγραφή;",
-        text: "Θα διαγραφή η αιτία: '" + $("#cause-modal").val() + "' και όλες οι δευτερεύουσες αιτίες αυτής!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Ναι, Διέγραψέ το!",
-        closeOnConfirm: false
-    }, function () {
-        Meteor.call('deleteDamage', id, function (error, response) {
+    var user = Session.get("user");
+
+    if (user) {
+        swal({
+            title: "Να προχωρήσω στην διαγραφή;",
+            text: "Θα διαγραφή η αιτία: '" + $("#cause-modal").val() + "' και όλες οι δευτερεύουσες αιτίες αυτής!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Ναι, Διέγραψέ το!",
+            closeOnConfirm: false
+        }, function () {
+            Meteor.call('deleteDamage', id, function (error, response) {
+                if (response) {
+                    swal({
+                        title: "Η Διαγραφή της βλάβης πέτυχε!",
+                        text: response,
+                        type: "success",
+                        showCancelButton: false,
+                    });
+                    getDamages("getDeleteDamages", user.id, null);
+                } else {
+                    swal({
+                        title: "Η Διαγραφή της βλάβης απέτυχε!",
+                        text: error,
+                        type: "warning",
+                        showCancelButton: false,
+                    });
+                }
+            });
+        });
+    }
+}
+
+function updateDamage(id) {
+    var user = Session.get("user");
+
+    if (user) {
+        var damage = {
+            id: Number(id),
+            user: $("#user-modal option:selected").val(),
+            note: $("#note-modal").val(),
+            type: (user.type === 1) ? $("#cause-type-modal option:selected").val() : null,
+            cause: (user.type === 1) ? $("#subcause-modal option:selected").val() : null,
+            duration: (user.type === 1) ? $("#duration-modal").val() : null
+        };
+
+        Meteor.call('updateDamage', damage, function (error, response) {
             if (response) {
                 swal({
-                    title: "Η Διαγραφή της βλάβης επέτυχε!",
+                    title: "Η διόρθωση της βλάβης έγινε!",
                     text: response,
                     type: "success",
                     showCancelButton: false,
                 });
+                var criteria = Session.get("criteria");
+
+                if (criteria) {
+                    getDamages("getDamages", null, criteria);
+                } else {
+                    getDamages("getDamages", user.id, null);
+                }
             } else {
                 swal({
-                    title: "Η Διαγραφή της βλάβης απέτυχε!",
+                    title: "Η διόρθωση της βλάβης απέτυχε!",
                     text: error,
                     type: "warning",
                     showCancelButton: false,
                 });
             }
         });
-    });
-}
-
-function updateDamage(id) {
-    var damage = {
-        id: Number(id),
-        user: $("#user-modal option:selected").val(),
-        note: $("#note-modal").val(),
-        cause: $("#subcause-modal option:selected").val()
-    };
-
-    Meteor.call('updateDamage', damage, function (error, response) {
-        if (response) {
-            swal({
-                title: "Η διόρθωση της βλάβης έγινε!",
-                text: response,
-                type: "success",
-                showCancelButton: false,
-            });
-        } else {
-            swal({
-                title: "Η διόρθωση της βλάβης απέτυχε!",
-                text: error,
-                type: "warning",
-                showCancelButton: false,
-            });
-        }
-    })
+    }
 }
 
 function getDamage(id) {
@@ -103,7 +133,39 @@ function getDamage(id) {
             }
         } catch (error) {
         }
-    })
+    });
+}
+
+function getDepartment(department) {
+    Meteor.call('getDepartment', department, function (error, response) {
+        try {
+            var department = JSON.parse(response);
+
+            if (department) {
+                Session.set("department", department);
+            }
+        } catch (error) {
+        }
+    });
+}
+
+function getDeleteDamages() {
+    var user = Session.get("user");
+
+    if (user) {
+        Session.set("damages", null);
+        Session.set("damage", null);
+        Session.set("subcauses", null);
+        Session.set("users", null);
+        Session.set("from", null);
+        Session.set("to", null);
+        Session.set("damage_counters", "M:0,H:0,K:0");
+        Session.set("descriptionDepartment", null);
+        Session.set("descriptionMachine", null);
+        Session.set("mttr", 0);
+        Session.set("mtbf", 0);
+        getDamages("getDeleteDamages", user.id, null);
+    }
 }
 
 Template.SearchDamage.rendered = function () {
@@ -114,7 +176,20 @@ Template.SearchDamage.rendered = function () {
         Session.set("damage", null);
         Session.set("subcauses", null);
         Session.set("users", null);
-        getDamages(user.id, null);
+        Session.set("from", null);
+        Session.set("to", null);
+        Session.set("damage_counters", "M:0,H:0,K:0");
+        Session.set("descriptionDepartment", null);
+        Session.set("descriptionMachine", null);
+        Session.set("mttr", 0);
+        Session.set("mtbf", 0);
+        if (Router.current().params.query.machineId) {
+            getMachine(Router.current().params.query.machineId, null, null);
+        }
+        if (Router.current().params.query.departmentId) {
+            getDepartment(Router.current().params.query.departmentId);
+        }
+        getDamages("getDamages", user.id, null);
         this.$('.datetimepicker').datetimepicker({format: 'YYYY-MM-DD HH:MM:SS'});
     } else {
         Router.go("Login");
@@ -122,7 +197,79 @@ Template.SearchDamage.rendered = function () {
 };
 
 Template.SearchDamage.helpers({
-    "damages": function () {
+    hasDepartment: function () {
+        return Router.current().params.query.departmentId;
+    },
+    hasMachine: function () {
+        return Router.current().params.query.machineId;
+    },
+    hasCriteria: function () {
+        return Session.get("from") && Session.get("to");
+    },
+    from: function () {
+        var from = Session.get("from");
+
+        if (from) {
+            return from;
+        }
+
+        return null;
+    },
+    to: function () {
+        var to = Session.get("to");
+
+        if (to) {
+            return to;
+        }
+
+        return null;
+    },
+    mtbf: function () {
+        var mtbf = Session.get("mtbf");
+
+        if (mtbf) {
+            return mtbf;
+        }
+
+        return 0;
+    },
+    mttr: function () {
+        var mttr = Session.get("mttr");
+
+        if (mttr) {
+            return mttr;
+        }
+
+        return 0;
+    },
+    damage_counters: function () {
+        var damage_counters = Session.get("damage_counters");
+
+        if (damage_counters) {
+            return damage_counters;
+        }
+
+        return "";
+    },
+    descriptionDepartment: function () {
+        var department = Session.get("department");
+
+        if (department) {
+            return department.description;
+        }
+
+        return null;
+    },
+    descriptionMachine: function () {
+        var machines = Session.get("machines");
+
+        if (machines) {
+            return machines[0].code;
+        }
+
+        return null;
+    },
+    damages: function () {
         var damages = Session.get("damages");
 
         if (damages) {
@@ -131,38 +278,31 @@ Template.SearchDamage.helpers({
 
         return null;
     },
-    "damage": function () {
+    damage: function () {
         var damage = Session.get("damage");
 
         if (damage) {
             damage.created = moment(damage.created).format("llll");
-            damage.title = damage.descriptionType + ": " + damage.descriptionCause;
-            if (damage.deleted === 1) {
-                $("#restore").show();
-                $("#delete").hide();
-            } else {
-                $("#delete").show();
-                $("#restore").hide();
-            }
+            damage.title = damage.descriptionType + ": " + damage.descriptionCause + "[" + damage.descriptionSubcause + "]";
 
             return damage;
         }
 
         return null;
     },
-    "dataPageList": function () {
-        return "[5, 10, 15, 20, 25, 30]";
+    dataPageList: function () {
+        return "[5, 10, 15, 20, 25, 30, 35, 40, 45, 50]";
     },
-    "hasCause": function (descriptionCause) {
+    hasCause: function (descriptionCause) {
         return descriptionCause;
     },
-    "hasSubcause": function (descriptionSubcause) {
+    hasSubcause: function (descriptionSubcause) {
         return descriptionSubcause;
     },
-    "hasUser": function (user) {
+    hasUser: function (user) {
         return user !== "0";
     },
-    "subcauses": function () {
+    subcauses: function () {
         var subcauses = Session.get("subcauses");
 
         if (subcauses) {
@@ -171,7 +311,7 @@ Template.SearchDamage.helpers({
 
         return null;
     },
-    "causes": function () {
+    causes: function () {
         var causes = Session.get("causes");
 
         if (causes) {
@@ -180,7 +320,16 @@ Template.SearchDamage.helpers({
 
         return null;
     },
-    "users": function () {
+    types: function () {
+        var types = Session.get("types");
+
+        if (types) {
+            return types;
+        }
+
+        return null;
+    },
+    users: function () {
         var users = Session.get("users");
 
         if (users) {
@@ -189,29 +338,42 @@ Template.SearchDamage.helpers({
 
         return null;
     },
-    "Preservative": function () {
+    isPreservative: function () {
         var user = Session.get("user");
 
         if (user) {
-            return (user.type === 1 || user.type === 2 || user.type === 3);
+            return user.type === 2 || user.type === 3;
         }
 
         return false;
     },
-    "PAdmin": function () {
+    isAdmin: function () {
         var user = Session.get("user");
 
         if (user) {
-            return (user.type === 1);
+            return user.type === 1;
         }
 
         return false;
     },
-    "PUser": function () {
+    isAdminNoDeleted: function (damage) {
         var user = Session.get("user");
 
         if (user) {
-            return (user.type === 2 || user.type === 3);
+            var nodeleted = (user.type === 1 && damage && damage.deleted === false) ? true : false;
+
+            return nodeleted;
+        }
+
+        return false;
+    },
+    isAdminDeleted: function (damage) {
+        var user = Session.get("user");
+
+        if (user) {
+            var deleted = (user.type === 1 && damage && damage.deleted === true) ? true : false;
+
+            return deleted;
         }
 
         return false;
@@ -219,6 +381,19 @@ Template.SearchDamage.helpers({
 });
 
 Template.SearchDamage.events({
+    "click #sb-cause-modal": function (e) {
+        e.preventDefault();
+
+        var user = Session.get("user");
+
+        if (user) {
+            var damage = Session.get("damage");
+            var departmentIds = (damage) ? [damage.department] : null;
+
+            getCause(null, [1, 2], departmentIds, true, null);
+            $("#cause-modal").prop("disabled", false);
+        }
+    },
     "click #damage-view": function (e) {
         e.preventDefault();
 
@@ -227,30 +402,18 @@ Template.SearchDamage.events({
         if (user) {
             Session.set("subcauses", null);
             Session.set("_users", null);
+            $("#cause-modal").prop("disabled", true);
             getDamage(e.target.getAttribute("data-id"));
-            getCause(null, null, null, true, e.target.getAttribute("data-id"));
-            getUser(null, e.target.getAttribute("data-id"));
-
-            if (user.type === 1 || user.type === 2 || user.type === 3) {
-                $("#note-modal").attr("readonly", false);
+            if (user.type === 1) {
+                getUser([2, 3], null);
+                getCauseType([1, 2]);
+            } else if (user.type === 2 || user.type === 3) {
+                getUser([user.type], null);
             }
+
+            $("#note-modal").attr("readonly", (user.type === 1 || user.type === 2 || user.type === 3) ? false : true);
             $('#damage-modal').modal('show');
         }
-    },
-    "click #edit": function (e) {
-        e.preventDefault();
-        $("#created-modal").datepicker({
-            format: "dd/mm/yyyy",
-            autoclose: true,
-            calendarWeeks: true,
-            todayHighlight: true
-        });
-        $("#created-modal").removeAttr('readonly');
-        $("#type-modal").removeAttr('readonly');
-        $("#department-modal").removeAttr('readonly');
-        $("#machine-modal").removeAttr('readonly');
-        $("#cause-modal").removeAttr('readonly');
-        $("#user-modal").removeAttr('readonly');
     },
     "click #delete": function (e) {
         e.preventDefault();
@@ -261,7 +424,8 @@ Template.SearchDamage.events({
     "click #restore": function (e) {
         e.preventDefault();
 
-        restoreDamage(e.target.getAttribute("data-id"));
+        restoreDamage(e.target.getAttribute("data-id"), e.target.getAttribute("data-name"));
+
         $("#damage-modal").modal("hide");
     },
     "click #update": function (e) {
@@ -273,12 +437,19 @@ Template.SearchDamage.events({
     "click #cancel": function (e) {
         e.preventDefault();
 
+        var user = Session.get("user");
+        var damage = Session.get("damage");
+
+        if (user && user.type === 1 && damage && damage.deleted === true) {
+            getDeleteDamages();
+        }
+
         $("#damage-modal").modal("hide");
     },
     "click #recycle": function (e) {
         e.preventDefault();
 
-        recycleDamage(e.target.getAttribute("data-id"))
+        getDeleteDamages();
     },
     "click [name=\"refresh\"]": function (e, t) {
         e.preventDefault();
@@ -288,23 +459,46 @@ Template.SearchDamage.events({
         if (user) {
             Session.set("damages", null);
             Session.set("damage", null);
+            Session.set("causes", null);
             Session.set("subcauses", null);
             Session.set("users", null);
-            getDamages(user.id, null);
+            Session.set("damages", null);
+            Session.set("from", null);
+            Session.set("to", null);
+            Session.set("damage_counters", "M:0,H:0,K:0");
+            Session.set("descriptionDepartment", null);
+            Session.set("descriptionMachine", null);
+            Session.set("mttr", 0);
+            Session.set("mtbf", 0);
+            $("#header-info").html("");
+            getDamages("getDamages", user.id, null);
             $(".datetimepicker").datetimepicker({
                 format: 'YYYY-MM-DD HH:MM:SS'
             });
         }
     },
+    "change #cause-type-modal": function (e) {
+        e.preventDefault();
+        var user = Session.get("user");
+
+        if (user) {
+            var type = $("#cause-type-modal option:selected").val();
+            var types = [];
+            var damage = Session.get("damage");
+            var departmentIds = (damage) ? [] : null;
+
+            types.push(type);
+            departmentIds.push(damage.department);
+            getCause(null, types, departmentIds, (type !== 3) ? true : false, null);
+        }
+    },
     "change #cause-modal": function (e) {
         e.preventDefault();
         var user = Session.get("user");
-        
+
         if (user) {
             var cause = $("#cause-modal option:selected").val();
-            
-            console.log("cause", cause);
-            
+
             Session.set("subcauses", null);
             getSubcause(cause);
         }
@@ -315,22 +509,6 @@ Template.SearchDamage.events({
         var damages = Session.get("damages");
 
         if (damages) {
-//            var $table = $('#table');
-//            $table.bootstrapTable('destroy').bootstrapTable({
-//                exportData: damages
-//            });
-//            exports.parse("");
-//            excelBuilder.
-            //require('tableexport');
-//            var workSheet = excelBuilder.SimpleExcel
-//                    createWorkbook('./', 'sample.xlsx');
-
-//            var excel = new Excel("xls");
-
-//            excel.createWorkbook();
-
-//            console.log("get excel");
-
             exportAllContacts(damages);
         }
     }

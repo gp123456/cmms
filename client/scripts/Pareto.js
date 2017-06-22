@@ -10,7 +10,6 @@ Template.Pareto.rendered = function () {
     var user = Session.get("user");
 
     if (user) {
-        Session.set("pareto", null);
         getPareto(user.id, null);
     } else {
         Router.go("Login");

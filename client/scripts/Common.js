@@ -5,13 +5,12 @@
  */
 
 
-/* global Session, Meteor, Router, Papa, Excel*/
+/* global Session, Meteor, Router, Papa, Excel, moment*/
 
 getDepartments = function getDepartments(userId) {
     Meteor.call('getDepartments', userId, function (error, response) {
         try {
             var departments = JSON.parse(response);
-
             if (departments) {
                 Session.set("departments", departments);
             }
@@ -19,12 +18,10 @@ getDepartments = function getDepartments(userId) {
         }
     });
 };
-
 getCauseType = function getCauseType(ids) {
     Meteor.call('getCauseType', ids, function (error, response) {
         try {
             var types = JSON.parse(response);
-
             if (types) {
                 Session.set("types", types);
             }
@@ -32,20 +29,16 @@ getCauseType = function getCauseType(ids) {
         }
     });
 };
-
 getCause = function getCause(userId, type, department, subcause, damage) {
-    Meteor.call('getCause', userId, department, type, damage, function (error, response) {
+    Meteor.call('getCause', userId, type, department, damage, function (error, response) {
         try {
             var causes = JSON.parse(response);
             var ids = [];
-
             if (causes) {
                 Session.set("causes", causes);
-
                 causes.forEach(function (cause) {
                     ids.push(cause.id);
                 });
-
                 if (subcause) {
                     getSubcause(ids);
                 }
@@ -56,12 +49,10 @@ getCause = function getCause(userId, type, department, subcause, damage) {
         }
     });
 };
-
-getSubcause = function getSubcause(cause) {
-    Meteor.call('getSubcause', cause, function (error, response) {
+getSubcause = function getSubcause(causes) {
+    Meteor.call('getSubcause', causes, function (error, response) {
         try {
             var subcauses = JSON.parse(response);
-
             if (subcauses) {
                 Session.set("subcauses", subcauses);
             }
@@ -69,9 +60,8 @@ getSubcause = function getSubcause(cause) {
         }
     });
 };
-
-getMachine = function getMachine(userId, department) {
-    Meteor.call('getMachine', userId, department, function (error, response) {
+getMachine = function getMachine(machine, department, userId) {
+    Meteor.call('getMachine', machine, department, userId, function (error, response) {
         try {
             var machines = JSON.parse(response);
 
@@ -82,12 +72,10 @@ getMachine = function getMachine(userId, department) {
         }
     });
 };
-
 getUser = function getUser(type, damage) {
     Meteor.call('getUser', type, damage, function (error, response) {
         try {
             var users = JSON.parse(response);
-
             if (users) {
                 Session.set("users", users);
             }
@@ -95,7 +83,6 @@ getUser = function getUser(type, damage) {
         }
     });
 };
-
 //function clickFilter() {
 //    $('.filterable .btn-filter').click(function () {
 //        var $panel = $(this).parents('.filterable'),
@@ -159,9 +146,31 @@ initMultiselect = function initMultiselect(id, nonSelectedText, buttonWidth) {
     });
 };
 
-getDamages = function getDamages(userId, criteria) {
+function getMachinesByDamages(damages) {
+    var machines = 0;
+    var machineId = 0;
+
+    damages.sort(function (a, b) {
+        return (a.machine > b.machine)
+                ? 1
+                : ((b.machine > a.machine)
+                        ? -1
+                        : 0);
+    });
+
+    damages.forEach(function (damage) {
+        if (damage.machine !== machineId && damage.type != 3) {
+            machines++;
+            machineId = damage.machine;
+        }
+    });
+
+    return (machines === 0) ? 1 : machines;
+}
+
+getDamages = function getDamages(callFunction, userId, criteria) {
     Meteor.call(
-            'getDamages',
+            callFunction,
             userId,
             Router.current().params.query.machineId,
             Router.current().params.query.departmentId,
@@ -170,21 +179,60 @@ getDamages = function getDamages(userId, criteria) {
                 try {
                     $('#table-damage').bootstrapTable("destroy");
                     if (response) {
-                        var damages = JSON.parse(response);
+                        var values = JSON.parse(response);
+                        var damages = JSON.parse(values.damages);
 
                         if (damages) {
-                            Session.set("damages", damages);
+                            var totalDurationCause = 0;
+                            var countElectrical = 0;
+                            var countMechanical = 0;
+                            var countDelay = 0;
+
                             damages.forEach(function (damage) {
                                 if (damage.type !== 3) {
                                     damage.created = "<a id='damage-view' data-id='" + damage.id + "'>" +
                                             moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
+                                    totalDurationCause += damage.duration;
+                                    if (damage.type === 1) {
+                                        countMechanical++;
+                                    } else if (damage.type === 2) {
+                                        countElectrical++;
+                                    }
                                 } else {
                                     damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
+                                    countDelay++;
                                 }
                                 damage.minuteDuration = damage.minuteDuration + "΄";
                             });
-
+                            
                             $("#table-damage").bootstrapTable({data: damages});
+                            Session.set("damages", damages);
+
+                            if (callFunction !== "getDeleteDamages") {
+                                var totalCauses = countMechanical + countElectrical;
+                                var totalDuration = (totalDurationCause / 60) + Number(values.delayDuration);
+                                var machines = getMachinesByDamages(damages);
+                                var mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
+                                var criteriaDuration = (Number(values.period) * machines) / 60000;
+                                var mtbf = (totalCauses) ? (criteriaDuration - totalDuration) / totalCauses : 0;
+                            } else {
+                                mttr = mtbf = 0.0;
+                            }
+
+                            var damage_counters = "";
+
+                            if (countMechanical) {
+                                damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
+                            }
+                            if (countElectrical) {
+                                damage_counters += (damage_counters === "") ? "H:" + countElectrical : ",H:" + countElectrical;
+                            }
+                            if (countDelay) {
+                                damage_counters += (damage_counters === "") ? "K:" + countDelay : ",K:" + countDelay;
+                            }
+                            Session.set("mttr", mttr.toFixed(2));
+                            Session.set("mtbf", mtbf.toFixed(2));
+                            Session.set("damage_counters", damage_counters);
                         }
                     }
                 } catch (error) {
@@ -192,45 +240,58 @@ getDamages = function getDamages(userId, criteria) {
             })
 }
 
-var json2csv = require('json2csv');
-
 exportAllContacts = function exportAllContacts(damages) {
-    var data = [];
-    var fields = ["Ημερομηνία", "Τύπος", "Τμήμα", "Μηχανή", "Χρήστης", "Αιτία", "Δευτερεύουσα Αιτία", "Διάρκεια", "Σχόλιο"];
+    var data =
+            "<html xmlns:o='urn:schemas-microsoft-com:office:office'xmlns:x='urn:schemas-microsoft-com:office:excel'xmlns='http://www.w3.org/TR/REC-html40'>" +
+            "<head>" +
+            "<!--[if gte mso 9]>" +
+            "<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>" +
+            "<![endif]-->" +
+            "</head>" +
+            "<body>" +
+            "<table align='center' >" +
+            "<thead valign='top'>" +
+            "<tr>" +
+            "<th>Ημερομηνία</th>" +
+            "<th>Τύπος</th>" +
+            "<th>Τμήμα</th>" +
+            "<th>Μηχανή</th>" +
+            "<th>Χρήστης</th>" +
+            "<th>Αιτία</th>" +
+            "<th>Δευτερεύουσα Αιτία</th>" +
+            "<th>Διάρκεια(λεπτά)</th>" +
+            "<th>Σχόλιο</th>" +
+            "</tr>" +
+            "</thead>" +
+            "<tbody>";
     damages.forEach(function (damage) {
-        data.push({
-            "Ημερομηνία": damage.created,
-            "Τύπος": damage.descriptionType,
-            "Τμήμα": damage.descriptionDepartment,
-            "Μηχανή": damage.descriptionMachine,
-            "Χρήστης": damage.descriptionUser,
-            "Αιτία": damage.descriptionCause,
-            "Δευτερεύουσα Αιτία": damage.descriptionSubcause,
-            "Διάρκεια": damage.duration,
-            "Σχόλιο": damage.note
-        });
+        data +=
+                "<tr>" +
+                "<td>" + damage.created + "</td>" +
+                "<td>" + damage.descriptionType + "</td>" +
+                "<td>" + damage.descriptionDepartment + "</td>" +
+                "<td>" + damage.descriptionMachine + "</td>" +
+                "<td>" + damage.descriptionUser + "</td>" +
+                "<td>" + damage.descriptionCause + "</td>" +
+                "<td>" + damage.descriptionSubcause + "</td>" +
+                "<td>" + Number(damage.duration / 60).toFixed(0) + "</td>" +
+                "<td>" + damage.note + "</td>" +
+                "</tr>";
     });
-
+    data += "</tbody></table></body></html>"
     try {
-        var csv = "\"sep=,\"\n" + json2csv({data: data, fields: fields});
-
-        console.log(csv);
-
+        _downloadCSV(data);
     } catch (err) {
         console.error(err);
     }
-
-    _downloadCSV(csv);
 };
-
-function  _downloadCSV(csv) {
-    var blob = new Blob([csv], {type: 'application/x-ms-excel'});
+function  _downloadCSV(data) {
+    var blob = new Blob([data], {type: 'application/vnd.ms-excel'});
 
     if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob, "damage.xls");
     } else {
         var a = window.document.createElement("a");
-
         a.href = window.URL.createObjectURL(blob);
         a.download = "damage.xls";
         document.body.appendChild(a);
@@ -241,10 +302,8 @@ function  _downloadCSV(csv) {
 
 activeMenu = function activeMenu(userType) {
     var menuId = Session.get("menuId");
-
     if (menuId) {
         var menuCount = (userType === 1) ? 5 : ((userType === 2 || userType === 3 || userType === 4 || userType === 5) ? 4 : 0);
-
         for (var i = 1; i <= menuCount; i++) {
             $("#menu-" + i).removeClass($("#menu-" + i).attr("class")).addClass("item");
         }
@@ -260,7 +319,6 @@ activeMenu = function activeMenu(userType) {
 awesomeChartClear = function awesomeChartClear(canvasElementId) {
     var canvas = (typeof canvasElementId === 'string') ? document.getElementById(canvasElementId) : canvasElementId;
     var context = canvas.getContext('2d');
-
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 }
 
@@ -273,11 +331,54 @@ function awesomeChartDraw(name, type, title, labels, data) {
     chart13.draw();
 }
 
+function clearPareto(criteria) {
+    var ParetoAnalysis = new FusionCharts({
+        "type": "mscolumnline3d",
+        "width": "1300",
+        "height": "800",
+        "dataFormat": "json",
+        "dataSource": {
+            "chart": {
+                "showvalues": "0",
+                "caption": "Pareto Analysis",
+                "subcaption": (criteria) ? "Περίοδος: " + criteria.from + " - " + criteria.to : "Περίοδος: Τρέχουσα Βάρδια",
+                "numberprefix": "",
+                "yaxisname": "Ώρες καθυστέρησης",
+                "showborder": "0",
+                "bgcolor": "#ffffff",
+                "canvasbgcolor": "#ffffff",
+                "captionfontsize": "18",
+                "subcaptionfontsize": "14",
+                "subcaptionfontbold": "0",
+                "divlinecolor": "#999999",
+                "divlineisdashed": "1",
+                "divlinedashlen": "1",
+                "divlinegaplen": "1",
+                "tooltipcolor": "#ffffff",
+                "tooltipborderthickness": "0",
+                "tooltipbgcolor": "#000000",
+                "tooltipbgalpha": "80",
+                "tooltipborderradius": "2",
+                "tooltippadding": "5",
+                "legendbgcolor": "#ffffff",
+                "legendborderalpha": "0",
+                "legendshadow": "0",
+                "legenditemfontsize": "10",
+                "legenditemfontcolor": "#666666",
+                "exportEnabled": "1",
+                "exportAtClientSide": "1",
+                "labelDisplay": "auto"
+            }
+        }
+    });
+
+    ParetoAnalysis.render("chartContainer");
+}
+
 getPareto = function getPareto(userId, criteria) {
     var FusionCharts = require("fusioncharts");
     require("fusioncharts/fusioncharts.charts")(FusionCharts);
     require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
-
     Meteor.call(
             'getPareto',
             userId,
@@ -286,16 +387,14 @@ getPareto = function getPareto(userId, criteria) {
             criteria,
             function (error, response) {
                 try {
+                    var categories = [];
+                    var delays = [];
+                    var percents = [];
+
                     if (response) {
                         var info = JSON.parse(response);
-                        
-                        console.log(info);
-                        
-                        if (info) {
-                            var categories = [];
-                            var delays = [];
-                            var percents = [];
 
+                        if (info) {
                             info.paretos.forEach(function (pareto) {
                                 if (pareto.label) {
                                     categories.push({"label": pareto.label});
@@ -304,7 +403,7 @@ getPareto = function getPareto(userId, criteria) {
                                 }
                             });
 
-                            new FusionCharts({
+                            var ParetoAnalysis = new FusionCharts({
                                 "type": "mscolumnline3d",
                                 "width": "1300",
                                 "height": "800",
@@ -313,15 +412,15 @@ getPareto = function getPareto(userId, criteria) {
                                     "chart": {
                                         "showvalues": "0",
                                         "caption": "Pareto Analysis",
-                                        "subcaption":
-                                                "Περίοδος: " +
-                                                criteria.from +
-                                                " - " +
-                                                criteria.to +
-                                                " - MTTR(ώρες): " +
-                                                info.mttr +
-                                                " - MTTBF(ώρες): " +
-                                                info.mtbf,
+                                        "subcaption": (criteria) ?
+                                                "Περίοδος: " + criteria.from + " - " + criteria.to +
+                                                " - MTTR(λεπτά): " + info.mttr +
+                                                " - MTBF(λεπτά): " + info.mtbf +
+                                                " - " + info.machineCodes :
+                                                "Περίοδος: Τρέχουσα Βάρδια" +
+                                                " - MTTR(λεπτά): " + info.mttr +
+                                                " - MTBF(λεπτά): " + info.mtbf +
+                                                " - " + info.machineCodes,
                                         "numberprefix": "",
                                         "yaxisname": "Ώρες καθυστέρησης",
                                         "showborder": "0",
@@ -355,8 +454,14 @@ getPareto = function getPareto(userId, criteria) {
                                         {"seriesname": "Ποσοστό επί του συνόλου", "renderas": "Line", "showvalues": "1", "data": percents}
                                     ]
                                 }
-                            }).render("chartContainer");
+                            });
+
+                            ParetoAnalysis.render("chartContainer");
+                        } else {
+                            clearPareto(criteria);
                         }
+                    } else {
+                        clearPareto(criteria);
                     }
                 } catch (error) {
 
@@ -365,9 +470,10 @@ getPareto = function getPareto(userId, criteria) {
 }
 
 clearSession = function clearSession() {
-    // your cleanup code here
+// your cleanup code here
     Object.keys(Session.keys).forEach(function (key) {
         Session.set(key, undefined);
     });
-    Session.keys = {}; // remove session keys
+    Session.keys = {}
+    ; // remove session keys
 }

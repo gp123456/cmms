@@ -14,7 +14,7 @@ function loginUser() {
             }
         } catch (error) {
             swal({
-                title: "Login Unsuccessful!",
+                title: "Η Σύνδεση απέτυχε!",
                 text: response,
                 type: "warning",
                 showCancelButton: false,

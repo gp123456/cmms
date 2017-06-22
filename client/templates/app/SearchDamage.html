@@ -49,10 +49,31 @@
             <div class="row">
                 <div id="toolbar" class="btn-group">
                     <button id="export" class="btn btn-default">Εξαγωγή Excel</button>
-<!--                    {{#if PAdmin}}
+                    {{#if isAdmin}}
                     <button id="recycle" class="btn btn-default">Διαγραμμένες Αιτίες</button>
-                    {{/if}}-->
+                    {{/if}}
                 </div>
+                {{#if hasCriteria}}
+                <div class="row" style="text-align: center">
+                    <h4 id="header-info">Περίοδος: {{from}} - {{to}} - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
+                </div>
+                {{else}}
+                {{#if hasDepartment}}
+                <div class="row" style="text-align: center">
+                    <h4>Τμήμα: {{descriptionDepartment}} - Περίοδος: Τρέχουσα Βάρδια - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
+                </div>                
+                {{else}}
+                {{#if hasMachine}}
+                <div class="row" style="text-align: center">
+                    <h4>Μηχανή: {{descriptionMachine}} - Περίοδος: Τρέχουσα Βάρδια - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
+                </div>
+                {{else}}
+                <div class="row" style="text-align: center">
+                    <h4>Περίοδος: Τρέχουσα Βάρδια - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
+                </div>
+                {{/if}}
+                {{/if}}
+                {{/if}}
                 <div style="visibility:hidden;">{{form_changed}}</div>
                 <table id="table-damage"
                        class="table"
@@ -89,28 +110,64 @@
                 </div>
                 <div class="modal-body">
                     <label for="created">Hμερομηνία</label>
-                    <input type="text" id="created-modal" value="{{damage.created}}" readonly/>
+                    <!--                    {{#if isAdminNoDeleted damage}}
+                                        <input
+                                            class="ui dropdown datetimepicker"
+                                            type="text"
+                                            id="created-modal"
+                                            name="createdΜodal"
+                                            placeholder="{{damage.created}}"
+                                            style="width: 200px;"/>
+                                        {{else}}-->
+                    <input type="text" id="created-modal" name="createdΜodal" value="{{damage.created}}" readonly/>
+                    <!--{{/if}}-->
                     <label for="type">Τύπος</label>
+                    {{#if isAdminNoDeleted damage}}
+                    <select id="cause-type-modal">
+                        <option value="null">Επέλεξε Τύπο Αιτίας</option>
+                        {{#each types}}
+                        <option value="{{id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    {{else}}
                     <input type="text" id="type-modal" value="{{damage.descriptionType}}" readonly/>
+                    {{/if}}
                     <label for="department">Τμήμα</label>
                     <input type="text" id="department-modal" value="{{damage.descriptionDepartment}}" readonly/>
                     <label for="machine">Μηχανή</label>
                     <input type="text" id="machine-modal" value="{{damage.descriptionMachine}}" readonly/>
+                    {{#if isAdminNoDeleted damage}}
+                    <label for="duration">Διάρκεια(λεπτά)</label>
+                    <input type="text" style="width: 100%" id="duration-modal" value="{{damage.minuteDuration}}"/>
+                    {{else}}
                     <label for="duration">Διάρκεια</label>
                     <input type="text" style="width: 100%" id="duration-modal" value="{{damage.minuteDuration}}'" readonly/>
+                    {{/if}}
                     <label for="cause">Αιτία</label>
                     {{#if Preservative}}
                     {{#if hasCause damage.descriptionCause}}
                     <input type="text" style="width: 100%" value="{{damage.descriptionCause}}" readonly/>
                     {{else}}
-                    <select id="cause-modal">
+                    <button id="sb-cause-modal" class="btn btn-primary btn-xs" style="width: 100px;vertical-align: top;">Ανανέωση</button>
+                    <select id="cause-modal" style="vertical-align: top;" disabled>
+                        <option value="null">Επέλεξε Αιτία</option>
                         {{#each causes}}
                         <option value="{{id}}">{{description}}</option>
-                        {{/each}} 
+                        {{/each}}
                     </select>
                     {{/if}}
                     {{else}}
+                    {{#if isAdminNoDeleted damage}}
+                    <button id="sb-cause-modal" class="btn btn-primary btn-xs" style="width: 100px;vertical-align: top;">Ανανέωση</button>
+                    <select id="cause-modal" style="vertical-align: top;" disabled>
+                        <option value="null">Επέλεξε Αιτία</option>
+                        {{#each causes}}
+                        <option value="{{id}}">{{description}}</option>
+                        {{/each}}
+                    </select>
+                    {{else}}
                     <input type="text" style="width: 100%" value="{{damage.descriptionCause}}" readonly/>
+                    {{/if}}
                     {{/if}}
                     <label for="subcause">Δευτερεύουσα Αιτία</label>
                     {{#if Preservative}}
@@ -118,39 +175,62 @@
                     <input type="text" style="width: 100%" value="{{damage.descriptionSubcause}}" readonly/>
                     {{else}}
                     <select id="subcause-modal">
+                        <option value="null">Επέλεξε Δευτερεύουσα Αιτία</option>
                         {{#each subcauses}}
                         <option value="{{id}}">{{description}}</option>
                         {{/each}} 
                     </select>
                     {{/if}}
                     {{else}}
+                    {{#if isAdminNoDeleted damage}}
+                    <select id="subcause-modal">
+                        <option value="null">Επέλεξε Δευτερεύουσα Αιτία</option>
+                        {{#each subcauses}}
+                        <option value="{{id}}">{{description}}</option>
+                        {{/each}}
+                    </select>
+                    {{else}}
                     <input type="text" style="width: 100%" value="{{damage.descriptionSubcause}}" readonly/>
                     {{/if}}
+                    {{/if}}
                     <label for="user">Χρήστης</label>
-                    {{#if Preservative}}
+                    {{#if isPreservative}}
                     {{#if hasUser damage.user}}
                     <input type="text" value="{{damage.descriptionUser}}" readonly/>
                     {{else}}
                     <select id="user-modal">
-                        <option value="0">Επέλεξε Χρήστη</option>
+                        <option value="null">Επέλεξε Χρήστη</option>
                         {{#each users}}
                         <option value="{{id}}">{{name}}</option>
                         {{/each}}
                     </select>
                     {{/if}}
                     {{else}}
+                    {{#if isAdminNoDeleted damage}}
+                    <select id="user-modal">
+                        <option value="null">Επέλεξε Χρήστη</option>
+                        {{#each users}}
+                        <option value="{{id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    {{else}}
                     <input type="text" style="width: 100%" value="{{damage.descriptionUser}}" readonly/>
+                    {{/if}}
                     {{/if}}
                     <label for="note">Σχόλιο</label>
                     <textarea rows="5" style="width: 100%" id="note-modal" value="{{damage.note}}" readonly></textarea>
                 </div>
                 <div class="modal-footer">
-                    {{#if PAdmin}}
+                    {{#if isAdminDeleted damage}}
+                    <button type="button" class="btn btn-primary" id="restore" data-id="{{damage.id}}" data-name="{{damage.descriptionSubcause}}">
+                        Επαναφορά
+                    </button>
+                    <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
+                    {{else if isAdminNoDeleted damage}}
                     <button type="button" class="btn btn-primary" id="update" data-id="{{damage.id}}">Διόρθωση</button>
                     <button type="button" class="btn btn-primary" id="delete" data-id="{{damage.id}}">Διαγραφή</button>
-                    <button type="button" class="btn btn-primary" id="restore" data-id="{{damage.id}}">Επαναφορά</button>
                     <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
-                    {{else if PUser}}
+                    {{else if isPreservative}}
                     <button type="button" class="btn btn-primary" id="update" data-id="{{damage.id}}">Διόρθωση</button>
                     <button type="button" class="btn btn-primary" id="cancel">Ακύρωση</button>
                     {{else}}

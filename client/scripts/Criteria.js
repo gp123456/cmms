@@ -27,7 +27,7 @@ function submitSearchDamage() {
         }
         var selectedCauses = [];
         $("#cause-criteria option:selected").each(function (index, value) {
-            selectedCauses.push(Number($(this).val()));
+            selectedCauses.push(Number($(this).val()) - 10000);
         });
         var selectedSubcauses = [];
         if (Router.current().originalUrl.search("pareto") === -1) {
@@ -51,6 +51,8 @@ function submitSearchDamage() {
             subcauses: selectedSubcauses,
             users: selectedUsers
         };
+        
+        Session.set("criteria", criteria);
 
         if (from !== '' && to !== '') {
             if (from > to) {
@@ -61,9 +63,20 @@ function submitSearchDamage() {
                 });
                 $("#from-criteria").val("");
                 $("#΄το-criteria").val("");
+            } else if (user.type === 4 && selectedDepartments.length === 0) {
+                swal({
+                    title: "Έλεγχος Διαχειριστή Τμήματος",
+                    text: "Πρέπει να επιλέξεις τουλάχιστον ένα τμήμα",
+                    type: "warning"
+                });
+                $("#from-criteria").val("");
+                $("#΄το-criteria").val("");
             } else {
                 if (Router.current().originalUrl.search("pareto") === -1) {
-                    getDamages(null, criteria);
+                    Session.set("from", criteria.from);
+                    Session.set("to", criteria.to);
+
+                    getDamages("getDamages", null, criteria);
                 } else {
                     getPareto(null, criteria);
                 }
@@ -98,7 +111,7 @@ Template.Criteria.rendered = function () {
 
     if (user) {
         getDepartments(user.id);
-        getMachine(user.id, null);
+        getMachine(null, null, user.id);
         if (user.type === 2) {
             getCauseType([2]);
         } else if (user.type === 3) {
@@ -186,6 +199,8 @@ Template.Criteria.helpers({
         if (causes) {
             return causes;
         }
+
+        return null;
     },
     "subcauses": function () {
         var subcauses = Session.get("subcauses");
@@ -253,7 +268,7 @@ Template.Criteria.events({
         Session.set("machines", null);
         Session.set("causes", null);
         Session.set("subcauses", null);
-        getMachine((selectedDepartment.length <= 0) ? user.id : null, (selectedDepartment.length > 0) ? selectedDepartment : null);
+        getMachine(null, (selectedDepartment.length > 0) ? selectedDepartment : null, (selectedDepartment.length <= 0) ? user.id : null);
         getCause(
                 (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
                 (selectedType.length > 0) ? selectedType : null,

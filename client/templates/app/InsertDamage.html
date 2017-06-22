@@ -1,5 +1,5 @@
 <template name="InsertDamage">
-    <script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>
+    <!--<script type="text/javascript" src="http://www.clubdesign.at/floatlabels.js"></script>-->
     <style type="text/css">
         .control-group.center{ float:none;margin:0 auto;width:400px;margin-bottom:20px;}
         .control-group .field {width:100px;float:left}
@@ -29,51 +29,61 @@
     </style>
     <div id="container">
         {{> Nav}}
+        <h2 style="text-align: center;">{{departmentDescription}}</h2>
         <div class="content">
             <div class="row-fluid">
                 <div class="offset4 span2">
                     <form id="insert-damage" class="form-horizontal" method="post">
-                        <div class="control-group center">
-                            <h2>{{departmentDescription}}</h2>
+                        <div class="form-group control-group center">
                             <h3>Εισαγωγή Αιτίας</h3>
                         </div>
+                        {{#if moreDepartment}}
                         <div class="form-group control-group center">
-                            <select name="machine" id="machine" required>
-                                <option value="">Επέλεξε Μηχανή</option>
+                            <select name="department" id="department">
+                                <option value="-1">Επέλεξε Τμήμα</option>
+                                {{#each departments}}
+                                <option value="{{id}}">{{description}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        {{/if}}
+                        <div class="form-group control-group center">
+                            <select name="machine" id="machine">
+                                <option value="-1">Επέλεξε Μηχανή</option>
                                 {{#each machines}}
                                 <option value="{{id}}">{{code}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <div class="form-group control-group center">
-                            <select name="type" id="type" required>
-                                <option value="">Επέλεξε Τύπο Αιτίας</option>
+                            <select name="type" id="type">
+                                <option value="-1">Επέλεξε Τύπο Αιτίας</option>
                                 {{#each types}}
                                 <option value="{{id}}">{{name}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <div class="form-group control-group center">
-                            <select name="cause" id="cause" required>
-                                <option value="">Επέλεξε Κύρια Αιτία</option>
+                            <select name="cause" id="cause">
+                                <option value="-1">Επέλεξε Αιτία</option>
                                 {{#each causes}}
                                 <option value="{{id}}">{{description}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <div class="form-group control-group center">
-                            <select name="subcause" id="subcause" required>
-                                <option value="">Επέλεξε Αιτία</option>
+                            <select name="subcause" id="subcause">
+                                <option value="-1">Επέλεξε Δευτερεύουσα Αιτία</option>
                                 {{#each subcauses}}
                                 <option value="{{id}}">{{description}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <div class="form-group control-group center">
-                            <input class="ui dropdown datetimepicker" type="text" name="created" id="created" style="width: 205px" placeholder="Έναρξη" required/>
+                            <input class="ui dropdown datetimepicker" type="text" name="created" id="created" style="width: 205px" placeholder="Έναρξη"/>
                         </div>
                         <div class="form-group control-group center">
-                            <input type="text" name="duration" id="duration" style="width: 205px" placeholder="Διάρκεια (λεπτά)" required>
+                            <input type="text" name="duration" id="duration" style="width: 205px" placeholder="Διάρκεια (λεπτά)">
                         </div>
                         <div class="form-group control-group center">
                             <input type="submit" value="Εισαγωγή" style="width: 205px" class="btn btn-primary btn-block btn-large">

@@ -22,6 +22,54 @@ function insertCause(refCause) {
     });
 }
 
+function insertCause(refCause) {
+    Meteor.call('insertCause', refCause, function (error, response) {
+        try {
+            var refCauses = JSON.parse(response);
+
+            if (refCauses) {
+                Session.set("refCauses", refCauses);
+
+                $('#table').bootstrapTable("destroy");
+                $("#table").bootstrapTable({data: refCauses});
+            }
+        } catch (error) {
+        }
+    });
+}
+
+function updateCause(refCause) {
+    Meteor.call('updateCause', refCause, function (error, response) {
+        try {
+            var refCauses = JSON.parse(response);
+
+            if (refCauses) {
+                Session.set("refCauses", refCauses);
+
+                $('#table').bootstrapTable("destroy");
+                $("#table").bootstrapTable({data: refCauses});
+            }
+        } catch (error) {
+        }
+    });
+}
+
+function updateSubcause(refCause) {
+    Meteor.call('updateSubcause', refCause, function (error, response) {
+        try {
+            var refCauses = JSON.parse(response);
+
+            if (refCauses) {
+                Session.set("refCauses", refCauses);
+
+                $('#table').bootstrapTable("destroy");
+                $("#table").bootstrapTable({data: refCauses});
+            }
+        } catch (error) {
+        }
+    });
+}
+
 function getCompleteCause(refCause) {
     Meteor.call('getCompleteCause', refCause, function (error, response) {
         try {
@@ -51,7 +99,7 @@ function deleteSubcause(id) {
         Meteor.call('deleteSubcause', id, function (error, response) {
             if (response) {
                 swal({
-                    title: "Η Διαγραφή της βλάβης επέτυχε!",
+                    title: "Η Διαγραφή της βλάβης πέτυχε!",
                     text: response,
                     type: "success",
                     showCancelButton: false,
@@ -81,7 +129,7 @@ function deleteCause(id) {
         Meteor.call('deleteCause', id, function (error, response) {
             if (response) {
                 swal({
-                    title: "Η Διαγραφή της βλάβης επέτυχε!",
+                    title: "Η Διαγραφή της βλάβης πέτυχε!",
                     text: response,
                     type: "success",
                     showCancelButton: false,
@@ -112,7 +160,7 @@ Template.InsertRefDamage.rendered = function () {
         Session.set("completeCause", null);
         getDepartments(user.id);
         getCauseType(ct);
-        getCause(user.id, null, null, false);
+        getCause(user.id, null, null, false, null);
         getCompleteCause(null);
         $("#insert-ref-cause").bootstrapValidator({
             feedbackIcons: {
@@ -317,13 +365,13 @@ Template.InsertRefDamage.events({
         
         Session.set("causes", null);
         if (departments && types) {
-            getCause(null, types, departments, false);
+            getCause(null, types, departments, false, null);
         } else if (types) {
-            getCause(null, types, null, false);
+            getCause(null, types, null, false, null);
         } else if (departments) {
-            getCause(null, null, departments, false);
+            getCause(null, null, departments, false, null);
         } else {
-            getCause(user.id, null, null, false);
+            getCause(user.id, null, null, false, null);
         }
     },
     "change #type": function(e) {
@@ -337,13 +385,13 @@ Template.InsertRefDamage.events({
         
         Session.set("causes", null);
         if (departments && types) {
-            getCause(null, types, departments, false);
+            getCause(null, types, departments, false, null);
         } else if (types) {
-            getCause(null, types, null, false);
+            getCause(null, types, null, false, null);
         } else if (departments) {
-            getCause(null, null, departments, false);
+            getCause(null, null, departments, false, null);
         } else {
-            getCause(user.id, null, null, false);
+            getCause(user.id, null, null, false, null);
         }
     }
 });
