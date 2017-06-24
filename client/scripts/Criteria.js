@@ -51,7 +51,7 @@ function submitSearchDamage() {
             subcauses: selectedSubcauses,
             users: selectedUsers
         };
-        
+
         Session.set("criteria", criteria);
 
         if (from !== '' && to !== '') {
@@ -296,26 +296,40 @@ Template.Criteria.events({
     "change #type-criteria": function (e) {
         e.preventDefault();
 
-        var departments = $("#department-criteria option:selected");
-        var selectedDepartment = [];
-        $(departments).each(function (index, department) {
-            selectedDepartment.push([$(this).val()]);
-        });
-        var types = $("#type-criteria option:selected");
-        var selectedType = [];
-        $(types).each(function (index, type) {
-            selectedType.push([$(this).val()]);
-        });
         var user = Session.get("user");
 
-        Session.set("causes", null);
-        Session.set("subcauses", null);
-        getCause(
-                (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
-                (selectedType.length > 0) ? selectedType : null,
-                (selectedDepartment.length > 0) ? selectedDepartment : null,
-                true
-                );
+        if (user) {
+            var departments = $("#department-criteria option:selected");
+            var selectedDepartment = [];
+            $(departments).each(function (index, department) {
+                selectedDepartment.push([$(this).val()]);
+            });
+            var types = $("#type-criteria option:selected");
+            var selectedType = [];
+            var userType = [];
+            $(types).each(function (index, type) {
+                var value = $(this).val();
+                
+                selectedType.push([value]);
+                if (value == 1) {
+                    userType.push(3);
+                }
+                if (value == 2) {
+                    userType.push(2);
+                }
+            });
+            Session.set("causes", null);
+            Session.set("subcauses", null);
+            Session.set("users", null);
+            
+            getCause(
+                    (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
+                    (selectedType.length > 0) ? selectedType : null,
+                    (selectedDepartment.length > 0) ? selectedDepartment : null,
+                    (selectedType.length == 1 && selectedType[0] == 3) ? false : true
+                    );
+            getUser(userType, null);
+        }
     },
     "click #sb-type-criteria": function (e) {
         e.preventDefault();
@@ -327,6 +341,9 @@ Template.Criteria.events({
             $("#subcause-criteria").multiselect("destroy");
             $("#subcause-criteria").prop("disabled", false);
             initMultiselect($("#subcause-criteria"), "Επέλεξε Δευτερεύουσα(ες) Αιτία(ίες)", "340px");
+            $("#user-criteria").multiselect("destroy");
+            $("#user-criteria").prop("disabled", false);
+            initMultiselect($("#user-criteria"), "Επέλεξε Χρήστη(ες)", "340px");
         } else {
             initMultiselect($("#cause-criteria"), "Επέλεξε Αιτία(ίες)", "340px");
         }

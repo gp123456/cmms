@@ -30,7 +30,7 @@ session@1.1.7
 momentjs:moment
 zuuk:stale-session
 u2622:persistent-session
-rajit:bootstrap3-datepicker
+# rajit:bootstrap3-datepicker
 gnomathibus:bootstrap-table-meteor
 emdagon:bootstrap-multiselect
 sarasate:semantic-ui-datetimepicker
