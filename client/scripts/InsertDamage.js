@@ -215,85 +215,89 @@ Template.InsertDamage.events({
     "submit #insert-damage": function (e) {
         e.preventDefault();
 
-        var target = event.target;
-        var department = target.department.value;
-        var machine = target.machine.value;
-        var type = target.type.value;
-        var cause = target.cause.value;
-        var subcause = target.subcause.value;
-        var created = target.created.value;
-        var duration = target.duration.value;
-        
-        if (department == -1) {
-            swal({
-                title: "Έλεγχος τμήματος",
-                text: "Πρέπει να επιλέξεις τμήμα",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
+        var user = Session.get("user");
+
+        if (user) {
+            var target = event.target;
+            var department = (target.hasOwnProperty("department")) ? target.department.value : user.department;
+            var machine = target.machine.value;
+            var type = target.type.value;
+            var cause = target.cause.value;
+            var subcause = target.subcause.value;
+            var created = target.created.value;
+            var duration = target.duration.value;
+
+            if (department == -1) {
+                swal({
+                    title: "Έλεγχος τμήματος",
+                    text: "Πρέπει να επιλέξεις τμήμα",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (machine == -1) {
+                swal({
+                    title: "Έλεγχος μηχανής",
+                    text: "Πρέπει να επιλέξεις μηχανή",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (type == -1) {
+                swal({
+                    title: "Έλεγχος Τύπου Αιτίας",
+                    text: "Πρέπει να επιλέξεις έναν τύπο αιτίας",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (cause == -1) {
+                swal({
+                    title: "Έλεγχος Κύριας Αιτίας",
+                    text: "Πρέπει να επιλέξεις μια κύρια αιτία",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (type != 3 && subcause == -1) {
+                swal({
+                    title: "Έλεγχος Αιτίας",
+                    text: "Πρέπει να επιλέξεις μια αιτία",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (created == "") {
+                swal({
+                    title: "Έλεγχος Ημερομηνίας",
+                    text: "Πρέπει να επιλέξεις μια ημερομηνία",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            if (duration == "" || duration < 0) {
+                swal({
+                    title: "Έλεγχος Διάρκειας",
+                    text: "Πρέπει να δώσεις μια θετική διάρκεια σε λεπτά",
+                    type: "warning",
+                    showCancelButton: false,
+                });
+
+                return;
+            }
+            insertDamage();
         }
-        if (machine == -1) {
-            swal({
-                title: "Έλεγχος μηχανής",
-                text: "Πρέπει να επιλέξεις μηχανή",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        if (type == -1) {
-            swal({
-                title: "Έλεγχος Τύπου Αιτίας",
-                text: "Πρέπει να επιλέξεις έναν τύπο αιτίας",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        if (cause == -1) {
-            swal({
-                title: "Έλεγχος Κύριας Αιτίας",
-                text: "Πρέπει να επιλέξεις μια κύρια αιτία",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        if (type != 3 && subcause == -1) {
-            swal({
-                title: "Έλεγχος Αιτίας",
-                text: "Πρέπει να επιλέξεις μια αιτία",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        if (created == "") {
-            swal({
-                title: "Έλεγχος Ημερομηνίας",
-                text: "Πρέπει να επιλέξεις μια ημερομηνία",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        if (duration == "" || duration < 0) {
-            swal({
-                title: "Έλεγχος Διάρκειας",
-                text: "Πρέπει να δώσεις μια θετική διάρκεια σε λεπτά",
-                type: "warning",
-                showCancelButton: false,
-            });
-            
-            return;
-        }
-        insertDamage();
     }
 });
