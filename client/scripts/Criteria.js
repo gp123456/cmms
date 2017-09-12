@@ -101,11 +101,19 @@ Template.Criteria.rendered = function () {
     Session.set("users", null);
     $("#from-criteria").datetimepicker({
         format: "YYYY-MM-DD HH:mm:ss",
-        sideBySide: true
+        sideBySide: true,
+        icons: {
+            previous: "glyphicon glyphicon-chevron-left",
+            next: 'glyphicon glyphicon-chevron-right'
+        }
     });
     $("#to-criteria").datetimepicker({
         format: "YYYY-MM-DD HH:mm:ss",
-        sideBySide: true
+        sideBySide: true,
+        icons: {
+            previous: "glyphicon glyphicon-chevron-left",
+            next: 'glyphicon glyphicon-chevron-right'
+        }
     });
     var user = Session.get("user");
 
@@ -309,7 +317,7 @@ Template.Criteria.events({
             var userType = [];
             $(types).each(function (index, type) {
                 var value = $(this).val();
-                
+
                 selectedType.push([value]);
                 if (value == 1) {
                     userType.push(3);
@@ -321,7 +329,7 @@ Template.Criteria.events({
             Session.set("causes", null);
             Session.set("subcauses", null);
             Session.set("users", null);
-            
+
             getCause(
                     (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
                     (selectedType.length > 0) ? selectedType : null,
