@@ -199,7 +199,6 @@
                     <input type="text" value="{{damage.descriptionUser}}" readonly/>
                     {{else}}
                     <select id="user-modal">
-                        <option value="null">Επέλεξε Χρήστη</option>
                         {{#each users}}
                         <option value="{{id}}">{{name}}</option>
                         {{/each}}
@@ -208,9 +207,8 @@
                     {{else}}
                     {{#if isAdminNoDeleted damage}}
                     <select id="user-modal">
-                        <option value="null">Επέλεξε Χρήστη</option>
                         {{#each users}}
-                        <option value="{{id}}">{{name}}</option>
+                        <option value="{{id}}" {{select}}>{{name}}</option>
                         {{/each}}
                     </select>
                     {{else}}

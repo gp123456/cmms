@@ -202,7 +202,9 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                                     damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
                                     countDelay++;
                                 }
-                                damage.minuteDuration = damage.minuteDuration + "΄";
+                                damage.minuteDuration = (damage.secondsDuration > 0)
+                                    ? damage.minuteDuration + "΄ " + damage.secondsDuration + "΄΄"
+                                    : damage.minuteDuration + "΄";
                             });
                             
                             $("#table-damage").bootstrapTable({data: damages});
@@ -259,7 +261,7 @@ exportAllContacts = function exportAllContacts(damages) {
             "<th>Χρήστης</th>" +
             "<th>Αιτία</th>" +
             "<th>Δευτερεύουσα Αιτία</th>" +
-            "<th>Διάρκεια(λεπτά)</th>" +
+            "<th>Διάρκεια</th>" +
             "<th>Σχόλιο</th>" +
             "</tr>" +
             "</thead>" +
@@ -274,7 +276,8 @@ exportAllContacts = function exportAllContacts(damages) {
                 "<td>" + damage.descriptionUser + "</td>" +
                 "<td>" + damage.descriptionCause + "</td>" +
                 "<td>" + damage.descriptionSubcause + "</td>" +
-                "<td>" + Number(damage.duration / 60).toFixed(0) + "</td>" +
+//                "<td>" + Number(damage.duration / 60).toFixed(0) + "</td>" +
+                "<td>" + damage.minuteDuration + "</td>" +
                 "<td>" + damage.note + "</td>" +
                 "</tr>";
     });

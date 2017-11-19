@@ -27,7 +27,7 @@ function submitSearchDamage() {
         }
         var selectedCauses = [];
         $("#cause-criteria option:selected").each(function (index, value) {
-            selectedCauses.push(Number($(this).val()) - 10000);
+            selectedCauses.push(Number($(this).val()));
         });
         var selectedSubcauses = [];
         if (Router.current().originalUrl.search("pareto") === -1) {

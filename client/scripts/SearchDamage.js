@@ -102,7 +102,7 @@ function updateDamage(id) {
                     title: "Η διόρθωση της βλάβης έγινε!",
                     text: response,
                     type: "success",
-                    showCancelButton: false,
+                    showCancelButton: false
                 });
                 var criteria = Session.get("criteria");
 
@@ -333,7 +333,20 @@ Template.SearchDamage.helpers({
         var users = Session.get("users");
 
         if (users) {
-            return users;
+            var _user = {
+                id: "null",
+                name: "Επέλεξε Χρήστη",
+                select: "selected"
+            };
+            var _users = [];
+
+            _users.push(_user);
+            users.forEach(function (u) {
+                _users.push(u);
+            });
+            console.log(_users);
+
+            return _users;
         }
 
         return null;
@@ -412,7 +425,7 @@ Template.SearchDamage.events({
             }
 
             $("#note-modal").attr("readonly", (user.type === 1 || user.type === 2 || user.type === 3) ? false : true);
-            $('#damage-modal').modal('show');
+            $("#damage-modal").modal("show");
         }
     },
     "click #delete": function (e) {
@@ -420,19 +433,21 @@ Template.SearchDamage.events({
 
         deleteDamage(e.target.getAttribute("data-id"));
         $("#damage-modal").modal("hide");
+        $("#damage-modal").clearInput();
     },
     "click #restore": function (e) {
         e.preventDefault();
 
         restoreDamage(e.target.getAttribute("data-id"), e.target.getAttribute("data-name"));
-
         $("#damage-modal").modal("hide");
+        $("#damage-modal").clearInput();
     },
     "click #update": function (e) {
         e.preventDefault();
 
         updateDamage(e.target.getAttribute("data-id"));
         $("#damage-modal").modal("hide");
+        $("#damage-modal").clearInput();
     },
     "click #cancel": function (e) {
         e.preventDefault();
@@ -443,8 +458,8 @@ Template.SearchDamage.events({
         if (user && user.type === 1 && damage && damage.deleted === true) {
             getDeleteDamages();
         }
-
         $("#damage-modal").modal("hide");
+        $("#damage-modal").clearInput();
     },
     "click #recycle": function (e) {
         e.preventDefault();

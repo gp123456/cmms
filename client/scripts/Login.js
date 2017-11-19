@@ -41,6 +41,7 @@ Template.Login.rendered = function () {
             loginUser();
         });
     } else {
+        Router.go("/");
         clearSession();
     }
 };
