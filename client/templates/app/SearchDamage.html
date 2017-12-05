@@ -147,9 +147,8 @@
                     {{#if Preservative}}
                     {{#if hasCause damage.descriptionCause}}
                     <input type="text" style="width: 100%" value="{{damage.descriptionCause}}" readonly/>
-                    {{else}}
-                    <button id="sb-cause-modal" class="btn btn-primary btn-xs" style="width: 100px;vertical-align: top;">Ανανέωση</button>
-                    <select id="cause-modal" style="vertical-align: top;" disabled>
+                    {{else}}                    
+                    <select id="cause-modal" style="vertical-align: top;">
                         <option value="null">Επέλεξε Αιτία</option>
                         {{#each causes}}
                         <option value="{{id}}">{{description}}</option>
@@ -158,8 +157,7 @@
                     {{/if}}
                     {{else}}
                     {{#if isAdminNoDeleted damage}}
-                    <button id="sb-cause-modal" class="btn btn-primary btn-xs" style="width: 100px;vertical-align: top;">Ανανέωση</button>
-                    <select id="cause-modal" style="vertical-align: top;" disabled>
+                    <select id="cause-modal" style="vertical-align: top;">
                         <option value="null">Επέλεξε Αιτία</option>
                         {{#each causes}}
                         <option value="{{id}}">{{description}}</option>
@@ -199,6 +197,7 @@
                     <input type="text" value="{{damage.descriptionUser}}" readonly/>
                     {{else}}
                     <select id="user-modal">
+                        <option value="null">Επέλεξε Χρήστη</option>
                         {{#each users}}
                         <option value="{{id}}">{{name}}</option>
                         {{/each}}
@@ -207,6 +206,7 @@
                     {{else}}
                     {{#if isAdminNoDeleted damage}}
                     <select id="user-modal">
+                        <option value="null">Επέλεξε Χρήστη</option>
                         {{#each users}}
                         <option value="{{id}}" {{select}}>{{name}}</option>
                         {{/each}}
@@ -216,7 +216,7 @@
                     {{/if}}
                     {{/if}}
                     <label for="note">Σχόλιο</label>
-                    <textarea rows="5" style="width: 100%" id="note-modal" value="{{damage.note}}" readonly></textarea>
+                    <textarea rows="5" style="width: 100%" id="note-modal" value="{{damage.note}}"></textarea>
                 </div>
                 <div class="modal-footer">
                     {{#if isAdminDeleted damage}}

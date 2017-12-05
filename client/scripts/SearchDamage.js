@@ -333,19 +333,12 @@ Template.SearchDamage.helpers({
         var users = Session.get("users");
 
         if (users) {
-            var _user = {
-                id: "null",
-                name: "Επέλεξε Χρήστη",
-                select: "selected"
-            };
             var _users = [];
 
-            _users.push(_user);
             users.forEach(function (u) {
                 _users.push(u);
             });
-            console.log(_users);
-
+            
             return _users;
         }
 
@@ -394,19 +387,6 @@ Template.SearchDamage.helpers({
 });
 
 Template.SearchDamage.events({
-    "click #sb-cause-modal": function (e) {
-        e.preventDefault();
-
-        var user = Session.get("user");
-
-        if (user) {
-            var damage = Session.get("damage");
-            var departmentIds = (damage) ? [damage.department] : null;
-
-            getCause(null, [1, 2], departmentIds, true, null);
-            $("#cause-modal").prop("disabled", false);
-        }
-    },
     "click #damage-view": function (e) {
         e.preventDefault();
 
@@ -415,7 +395,6 @@ Template.SearchDamage.events({
         if (user) {
             Session.set("subcauses", null);
             Session.set("_users", null);
-            $("#cause-modal").prop("disabled", true);
             getDamage(e.target.getAttribute("data-id"));
             if (user.type === 1) {
                 getUser([2, 3], null);
@@ -433,21 +412,33 @@ Template.SearchDamage.events({
 
         deleteDamage(e.target.getAttribute("data-id"));
         $("#damage-modal").modal("hide");
-        $("#damage-modal").clearInput();
+        $("#cause-type-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#cause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#subcause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#user-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#note-modal").val("");
     },
     "click #restore": function (e) {
         e.preventDefault();
 
         restoreDamage(e.target.getAttribute("data-id"), e.target.getAttribute("data-name"));
         $("#damage-modal").modal("hide");
-        $("#damage-modal").clearInput();
+        $("#cause-type-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#cause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#subcause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#user-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#note-modal").val("");
     },
     "click #update": function (e) {
         e.preventDefault();
 
         updateDamage(e.target.getAttribute("data-id"));
         $("#damage-modal").modal("hide");
-        $("#damage-modal").clearInput();
+        $("#cause-type-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#cause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#subcause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#user-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#note-modal").val("");
     },
     "click #cancel": function (e) {
         e.preventDefault();
@@ -459,7 +450,11 @@ Template.SearchDamage.events({
             getDeleteDamages();
         }
         $("#damage-modal").modal("hide");
-        $("#damage-modal").clearInput();
+        $("#cause-type-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#cause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#subcause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#user-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#note-modal").val("");
     },
     "click #recycle": function (e) {
         e.preventDefault();

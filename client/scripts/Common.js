@@ -202,9 +202,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                                     damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
                                     countDelay++;
                                 }
-                                damage.minuteDuration = (damage.secondsDuration > 0)
-                                    ? damage.minuteDuration + "΄ " + damage.secondsDuration + "΄΄"
-                                    : damage.minuteDuration + "΄";
+                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(2);	
                             });
                             
                             $("#table-damage").bootstrapTable({data: damages});
@@ -276,8 +274,7 @@ exportAllContacts = function exportAllContacts(damages) {
                 "<td>" + damage.descriptionUser + "</td>" +
                 "<td>" + damage.descriptionCause + "</td>" +
                 "<td>" + damage.descriptionSubcause + "</td>" +
-//                "<td>" + Number(damage.duration / 60).toFixed(0) + "</td>" +
-                "<td>" + damage.minuteDuration + "</td>" +
+                "<td>" + damage.minuteDuration.replace('.', ',') + "</td>" +
                 "<td>" + damage.note + "</td>" +
                 "</tr>";
     });
