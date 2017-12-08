@@ -283,7 +283,9 @@ Template.SearchDamage.helpers({
 
         if (damage) {
             damage.created = moment(damage.created).format("llll");
-            damage.title = damage.descriptionType + ": " + damage.descriptionCause + "[" + damage.descriptionSubcause + "]";
+            damage.title = (damage.descriptionSubcause !== "")
+                ? damage.descriptionType + ": " + damage.descriptionCause + "[" + damage.descriptionSubcause + "]"
+                : damage.descriptionType + ": " + damage.descriptionCause;
 
             return damage;
         }
@@ -398,7 +400,7 @@ Template.SearchDamage.events({
             getDamage(e.target.getAttribute("data-id"));
             if (user.type === 1) {
                 getUser([2, 3], null);
-                getCauseType([1, 2]);
+                getCauseType([1, 2, 3]);
             } else if (user.type === 2 || user.type === 3) {
                 getUser([user.type], null);
             }

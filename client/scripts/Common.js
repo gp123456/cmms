@@ -189,7 +189,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                             var countDelay = 0;
 
                             damages.forEach(function (damage) {
-                                if (damage.type !== 3) {
+//                                if (damage.type !== 3) {
                                     damage.created = "<a id='damage-view' data-id='" + damage.id + "'>" +
                                             moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
                                     totalDurationCause += damage.duration;
@@ -197,11 +197,13 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                                         countMechanical++;
                                     } else if (damage.type === 2) {
                                         countElectrical++;
+                                    } else if (damage.type === 3) {
+                                        countDelay++;
                                     }
-                                } else {
-                                    damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
-                                    countDelay++;
-                                }
+//                                } else {
+//                                    damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
+//                                    countDelay++;
+//                                }
                                 damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(2);	
                             });
                             
