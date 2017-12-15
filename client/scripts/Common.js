@@ -204,7 +204,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
 //                                    damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
 //                                    countDelay++;
 //                                }
-                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(2);	
+                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);	
                             });
                             
                             $("#table-damage").bootstrapTable({data: damages});

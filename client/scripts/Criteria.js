@@ -39,8 +39,7 @@ function submitSearchDamage() {
         $("#user-criteria option:selected").each(function (index, value) {
             selectedUsers.push($(this).val());
         });
-
-
+        
         var criteria = {
             from: from,
             to: to,

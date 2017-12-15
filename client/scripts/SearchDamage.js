@@ -87,12 +87,14 @@ function updateDamage(id) {
     var user = Session.get("user");
 
     if (user) {
+        var type = $("#cause-type-modal option:selected").val();
+        var cause = (Number(type) !== 3) ? $("#subcause-modal option:selected").val() : $("#cause-modal option:selected").val();
         var damage = {
             id: Number(id),
             user: $("#user-modal option:selected").val(),
             note: $("#note-modal").val(),
-            type: (user.type === 1) ? $("#cause-type-modal option:selected").val() : null,
-            cause: (user.type === 1) ? $("#subcause-modal option:selected").val() : null,
+            type: (user.type === 1) ? type : null,
+            cause: (user.type === 1) ? cause : null,
             duration: (user.type === 1) ? $("#duration-modal").val() : null
         };
 
@@ -183,6 +185,7 @@ Template.SearchDamage.rendered = function () {
         Session.set("descriptionMachine", null);
         Session.set("mttr", 0);
         Session.set("mtbf", 0);
+        Session.set("criteria", null);
         if (Router.current().params.query.machineId) {
             getMachine(Router.current().params.query.machineId, null, null);
         }
@@ -482,6 +485,7 @@ Template.SearchDamage.events({
             Session.set("descriptionMachine", null);
             Session.set("mttr", 0);
             Session.set("mtbf", 0);
+            Session.set("criteria", null);
             $("#header-info").html("");
             getDamages("getDamages", user.id, null);
             $(".datetimepicker").datetimepicker({
@@ -501,17 +505,18 @@ Template.SearchDamage.events({
 
             types.push(type);
             departmentIds.push(damage.department);
-            getCause(null, types, departmentIds, (type !== 3) ? true : false, null);
+            getCause(null, types, departmentIds, (Number(type) !== 3) ? true : false, null);
         }
     },
     "change #cause-modal": function (e) {
         e.preventDefault();
         var user = Session.get("user");
+        var type = $("#cause-type-modal option:selected").val();
 
-        if (user) {
+        Session.set("subcauses", null);
+        if (user && Number(type) !== 3) {
             var cause = $("#cause-modal option:selected").val();
 
-            Session.set("subcauses", null);
             getSubcause(cause);
         }
     },
