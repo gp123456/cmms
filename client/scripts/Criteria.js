@@ -98,6 +98,11 @@ Template.Criteria.rendered = function () {
     Session.set("departments", null);
     Session.set("machines", null);
     Session.set("users", null);
+	moment.lang('en', {
+    week : {
+        dow : 1 // Monday is the first day of the week
+    }
+	});
     $("#from-criteria").datetimepicker({
         format: "YYYY-MM-DD HH:mm:00",
         sideBySide: true,

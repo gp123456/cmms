@@ -47,7 +47,7 @@ Template.InsertDamage.rendered = function () {
 
     if (user) {
         $("#created").datetimepicker({
-            format: "YYYY-MM-DD HH:mm:ss",
+            format: "YYYY-MM-DD HH:mm:00",
             sideBySide: true
         });
         Session.set("departments", null);
@@ -298,6 +298,13 @@ Template.InsertDamage.events({
                 return;
             }
             insertDamage();
+            $("#department > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+            $("#machine > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+            $("#type > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+            $("#cause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+            $("#subcause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+            $("#created").val("");
+            $("#duration").val("");
         }
     }
 });
