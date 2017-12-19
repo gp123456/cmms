@@ -1,18 +1,20 @@
 <template name="Criteria">
     <style type="text/css">
-        .datepicker,
+        .datepicker {
+            width: 410px
+        }
         .table-condensed {
             width: 200px;
             font-size: x-small;
         }
     </style>
     <div class="row-fluid">
-        <div class="offset4 span4">
-            <div class="form-group control-group" style="text-align: center">
-                <a class="btn btn-default btn-xs" data-toggle="collapse" href="#collapseOne">Κριτήρια</a>
-            </div>
+        <div class="form-group control-group" style="text-align: center">
+            <a class="btn btn-default btn-xs" data-toggle="collapse" href="#collapseOne">Κριτήρια</a>
+        </div>
+        <div class="offset4 span4" style= "width: 100%">
             <div id="collapseOne" class="panel-collapse collapse">
-                <form class="form-horizontal" id="form-criteria" method="post" style="overflow-y:auto; overflow-x:auto; width: 400px">
+                <form class="form-horizontal" id="form-criteria" method="post" style="overflow-y:auto; overflow-x:auto;">
                     <div class="form-group control-group">
                         <input type="text" id="from-criteria" name="fromCriteria" placeholder="Από" style="width: 155px;" />
                         <input type="text" id="to-criteria" name="toCriteria" placeholder="Μέχρι" style="width: 155px" />

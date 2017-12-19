@@ -99,7 +99,7 @@ Template.Criteria.rendered = function () {
     Session.set("machines", null);
     Session.set("users", null);
     $("#from-criteria").datetimepicker({
-        format: "YYYY-MM-DD HH:mm:ss",
+        format: "YYYY-MM-DD HH:mm:00",
         sideBySide: true,
         icons: {
             previous: "glyphicon glyphicon-chevron-left",
@@ -107,7 +107,7 @@ Template.Criteria.rendered = function () {
         }
     });
     $("#to-criteria").datetimepicker({
-        format: "YYYY-MM-DD HH:mm:ss",
+        format: "YYYY-MM-DD HH:mm:00",
         sideBySide: true,
         icons: {
             previous: "glyphicon glyphicon-chevron-left",

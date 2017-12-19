@@ -69,7 +69,14 @@ function deleteDamage(id) {
                         type: "success",
                         showCancelButton: false,
                     });
-                    getDamages("getDeleteDamages", user.id, null);
+                    //getDamages("getDeleteDamages", user.id, null);
+                    var criteria = Session.get("criteria");
+
+                    if (criteria) {
+                        getDamages("getDamages", null, criteria);
+                    } else {
+                        getDamages("getDamages", user.id, null);
+                    }
                 } else {
                     swal({
                         title: "Η Διαγραφή της βλάβης απέτυχε!",
