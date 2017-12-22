@@ -200,7 +200,7 @@ Template.SearchDamage.rendered = function () {
             getDepartment(Router.current().params.query.departmentId);
         }
         getDamages("getDamages", user.id, null);
-        this.$('.datetimepicker').datetimepicker({format: 'YYYY-MM-DD HH:MM:SS'});
+        this.$('.datetimepicker').datetimepicker({format: 'YYYY-MM-DD HH:MM:00'});
     } else {
         Router.go("Login");
     }
@@ -495,9 +495,7 @@ Template.SearchDamage.events({
             Session.set("criteria", null);
             $("#header-info").html("");
             getDamages("getDamages", user.id, null);
-            $(".datetimepicker").datetimepicker({
-                format: 'YYYY-MM-DD HH:MM:SS'
-            });
+            $(".datetimepicker").datetimepicker({format: 'YYYY-MM-DD HH:MM:00'});
         }
     },
     "change #cause-type-modal": function (e) {

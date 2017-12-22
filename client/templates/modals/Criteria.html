@@ -7,6 +7,11 @@
             width: 200px;
             font-size: x-small;
         }
+        .dropdown-menu {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
     </style>
     <div class="row-fluid">
         <div class="form-group control-group" style="text-align: center">
@@ -21,14 +26,14 @@
                     </div>
                     <div class="form-group control-group">
                         <button id="sb-department-criteria" class="btn btn-primary btn-xs" style="width: 100px">Ανανέωση</button>
-                        <select id="department-criteria" multiple>
+                        <select id="department-criteria" class="dropdown-menu" multiple>
                             {{#each departments}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
                         </select>
                     </div>
                     <div class="form-group control-group">
-                        <select id="machine-criteria" multiple>
+                        <select id="machine-criteria" class="dropdown-menu" multiple>
                             {{#each machines}}
                             <option value="{{id}}">{{code}}</option>
                             {{/each}}
@@ -47,13 +52,13 @@
                     <div class="form-group control-group">
                         {{#if NoPareto}}
                         <button id="sb-cause-criteria" class="btn btn-primary btn-xs" style="width: 100px">Ανανέωση</button>
-                        <select id="cause-criteria" multiple>
+                        <select id="cause-criteria" class="dropdown-menu" multiple>
                             {{#each causes}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
                         </select>
                         {{else}}
-                        <select id="cause-criteria" multiple>
+                        <select id="cause-criteria" class="dropdown-menu" multiple>
                             {{#each causes}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
@@ -62,7 +67,7 @@
                     </div>
                     {{#if NoPareto}}
                     <div class="form-group control-group">
-                        <select id="subcause-criteria" multiple>
+                        <select id="subcause-criteria" class="dropdown-menu" multiple>
                             {{#each subcauses}}
                             <option value="{{id}}">{{description}}</option>
                             {{/each}}
@@ -70,7 +75,7 @@
                     </div>
                     {{/if}}
                     <div class="form-group control-group">
-                        <select id="user-criteria" multiple>
+                        <select id="user-criteria" class="dropdown-menu" multiple>
                             {{#each users}}
                             <option value="{{id}}">{{name}}</option>
                             {{/each}}

@@ -178,6 +178,10 @@ getDamages = function getDamages(callFunction, userId, criteria) {
             function (error, response) {
                 try {
                     $('#table-damage').bootstrapTable("destroy");
+                    var damage_counters = "";
+                    var mttr = 0.0;
+                    var mtbf = 0.0;
+                    
                     if (response) {
                         var values = JSON.parse(response);
                         var damages = JSON.parse(values.damages);
@@ -214,29 +218,35 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                                 var totalCauses = countMechanical + countElectrical;
                                 var totalDuration = (totalDurationCause / 60) + Number(values.delayDuration);
                                 var machines = getMachinesByDamages(damages);
-                                var mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
                                 var criteriaDuration = (Number(values.period) * machines) / 60000;
-                                var mtbf = (totalCauses) ? (criteriaDuration - totalDuration) / totalCauses : 0;
-                            } else {
-                                mttr = mtbf = 0.0;
+                                
+                                mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
+                                mtbf = (totalCauses) ? (criteriaDuration - totalDuration) / totalCauses : 0;
                             }
-
-                            var damage_counters = "";
-
                             if (countMechanical) {
                                 damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
+                            } else {
+                                damage_counters += (damage_counters === "") ? "M:0" : ",M:0";
                             }
                             if (countElectrical) {
                                 damage_counters += (damage_counters === "") ? "H:" + countElectrical : ",H:" + countElectrical;
+                            } else {
+                                damage_counters += (damage_counters === "") ? "H:0" : ",H:0";
                             }
                             if (countDelay) {
                                 damage_counters += (damage_counters === "") ? "K:" + countDelay : ",K:" + countDelay;
+                            } else {
+                                damage_counters += (damage_counters === "") ? "K:0" : ",K:0";
                             }
-                            Session.set("mttr", mttr.toFixed(2));
-                            Session.set("mtbf", mtbf.toFixed(2));
-                            Session.set("damage_counters", damage_counters);
+                        } else {
+                            damage_counters = "M:0,H:0,K:0";
                         }
+                    } else {
+                        damage_counters = "M:0,H:0,K:0";
                     }
+                    Session.set("mttr", mttr.toFixed(2));
+                    Session.set("mtbf", mtbf.toFixed(2));
+                    Session.set("damage_counters", damage_counters);
                 } catch (error) {
                 }
             })
