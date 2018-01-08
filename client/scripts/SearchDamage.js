@@ -378,7 +378,7 @@ Template.SearchDamage.helpers({
         var user = Session.get("user");
 
         if (user) {
-            var nodeleted = (user.type === 1 && damage && damage.deleted === false) ? true : false;
+            var nodeleted = (user.type === 1 || user.type === 4 && damage && damage.deleted === false) ? true : false;
 
             return nodeleted;
         }
@@ -415,7 +415,7 @@ Template.SearchDamage.events({
                 getUser([user.type], null);
             }
 
-            $("#note-modal").attr("readonly", (user.type === 1 || user.type === 2 || user.type === 3) ? false : true);
+            $("#note-modal").attr("readonly", (user.type === 1 || user.type === 2 || user.type === 3 || user.type === 4) ? false : true);
             $("#damage-modal").modal("show");
         }
     },
