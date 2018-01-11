@@ -218,7 +218,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                             var criteriaDuration = (Number(values.period) * machines) / 60000;
                             
                             mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
-                            mtbf = (totalCauses && countDelay) ? (criteriaDuration - (totalDuration / 60)) / (totalCauses + countDelay) : 0;
+                            mtbf = (totalCauses) ? (criteriaDuration - (totalDuration / 60)) / totalCauses : 0;
                             if (countMechanical) {
                                 damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
                             } else {
