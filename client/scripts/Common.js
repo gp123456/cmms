@@ -187,42 +187,38 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                         var damages = JSON.parse(values.damages);
 
                         if (damages) {
+                            var totalDuration = 0;
                             var totalDurationCause = 0;
                             var countElectrical = 0;
                             var countMechanical = 0;
                             var countDelay = 0;
 
                             damages.forEach(function (damage) {
-//                                if (damage.type !== 3) {
-                                    damage.created = "<a id='damage-view' data-id='" + damage.id + "'>" +
-                                            moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
+                                damage.created = "<a id='damage-view' data-id='" + damage.id + "'>" +
+                                        moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
+                                totalDuration += damage.duration;
+                                if (damage.type === 1) {
+                                    countMechanical++;
                                     totalDurationCause += damage.duration;
-                                    if (damage.type === 1) {
-                                        countMechanical++;
-                                    } else if (damage.type === 2) {
-                                        countElectrical++;
-                                    } else if (damage.type === 3) {
-                                        countDelay++;
-                                    }
-//                                } else {
-//                                    damage.created = moment(damage.created).format("YYYY-MM-DD HH:mm:ss");
-//                                    countDelay++;
-//                                }
+                                } else if (damage.type === 2) {
+                                    countElectrical++;
+                                    totalDurationCause += damage.duration;
+                                } else if (damage.type === 3) {
+                                    countDelay++;
+                                }
+                                
                                 damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);	
                             });
                             
                             $("#table-damage").bootstrapTable({data: damages});
                             Session.set("damages", damages);
-
-                            if (callFunction !== "getDeleteDamages") {
-                                var totalCauses = countMechanical + countElectrical;
-                                var totalDuration = (totalDurationCause / 60) + Number(values.delayDuration);
-                                var machines = getMachinesByDamages(damages);
-                                var criteriaDuration = (Number(values.period) * machines) / 60000;
-                                
-                                mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
-                                mtbf = (totalCauses) ? (criteriaDuration - totalDuration) / totalCauses : 0;
-                            }
+                            
+                            var totalCauses = countMechanical + countElectrical;
+                            var machines = getMachinesByDamages(damages);
+                            var criteriaDuration = (Number(values.period) * machines) / 60000;
+                            
+                            mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
+                            mtbf = (totalCauses && countDelay) ? (criteriaDuration - (totalDuration / 60)) / (totalCauses + countDelay) : 0;
                             if (countMechanical) {
                                 damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
                             } else {

@@ -281,12 +281,18 @@ Template.Criteria.events({
         Session.set("causes", null);
         Session.set("subcauses", null);
         getMachine(null, (selectedDepartment.length > 0) ? selectedDepartment : null, (selectedDepartment.length <= 0) ? user.id : null);
-        getCause(
+        if (user.type === 2) {
+            getCause(null, 2, (selectedDepartment.length > 0) ? selectedDepartment : null, true);
+        } else if (user.type === 3) {
+            getCause(null, 1, (selectedDepartment.length > 0) ? selectedDepartment : null, true);
+        } else {
+            getCause(
                 (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
                 (selectedType.length > 0) ? selectedType : null,
                 (selectedDepartment.length > 0) ? selectedDepartment : null,
                 true
                 );
+        }
     },
     "click #sb-department-criteria": function (e) {
         e.preventDefault();
