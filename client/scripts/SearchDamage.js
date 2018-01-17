@@ -100,9 +100,9 @@ function updateDamage(id) {
             id: Number(id),
             user: $("#user-modal option:selected").val(),
             note: $("#note-modal").val(),
-            type: (user.type === 1) ? type : null,
-            cause: (user.type === 1) ? cause : null,
-            duration: (user.type === 1) ? $("#duration-modal").val() : null
+            type: (user.type === 1 || user.type === 4) ? type : null,
+            cause:(user.type === 1 || user.type === 4) ? cause : null,
+            duration: (user.type === 1 || user.type === 4) ? $("#duration-modal").val() : null
         };
 
         Meteor.call('updateDamage', damage, function (error, response) {

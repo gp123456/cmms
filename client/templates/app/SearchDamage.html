@@ -1,5 +1,10 @@
 <template name="SearchDamage">
     <style type="text/css">
+        #progress {
+            margin: 20px;
+            width: 200px;
+            height: 200px;
+        }
         .table thead th {
             color: black;
             background-color: white;
@@ -44,6 +49,7 @@
     <div id="container">
         {{> Nav}}
         <div class="content" style="width: 90%">
+            <div id="progress" style="display: none"></div>
             <h3 style="text-align: center">Reporting</h3>
             {{> Criteria}}
             <div class="row">

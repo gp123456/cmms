@@ -1,4 +1,5 @@
 /* global Template, Session, Blaze, Meteor */
+//var ProgressBar = require('progressbar.js')
 
 function submitSearchDamage() {
     var user = Session.get("user");
@@ -39,7 +40,7 @@ function submitSearchDamage() {
         $("#user-criteria option:selected").each(function (index, value) {
             selectedUsers.push($(this).val());
         });
-        
+
         var criteria = {
             from: from,
             to: to,
@@ -61,7 +62,7 @@ function submitSearchDamage() {
                     type: "warning"
                 });
                 $("#from-criteria").val("");
-                $("#΄το-criteria").val("");
+                $("#tο-criteria").val("");
             } else if (user.type === 4 && selectedDepartments.length === 0) {
                 swal({
                     title: "Έλεγχος Διαχειριστή Τμήματος",
@@ -69,8 +70,20 @@ function submitSearchDamage() {
                     type: "warning"
                 });
                 $("#from-criteria").val("");
-                $("#΄το-criteria").val("");
+                $("#tο-criteria").val("");
             } else {
+                $("#progress").show();
+//                var bar = new ProgressBar.Circle(progress1);//, {
+//                    strokeWidth: 6,
+//                    easing: 'easeInOut',
+//                    duration: 1400,
+//                    color: '#FFEA82',
+//                    trailColor: '#eee',
+//                    trailWidth: 1,
+//                    svgStyle: null
+//                });
+
+//                bar.animate(1.0);  // Number from 0.0 to 1.0
                 if (Router.current().originalUrl.search("pareto") === -1) {
                     Session.set("from", criteria.from);
                     Session.set("to", criteria.to);
@@ -79,6 +92,7 @@ function submitSearchDamage() {
                 } else {
                     getPareto(null, criteria);
                 }
+                $("#progress").hide();
                 $('.collapse').collapse("hide");
             }
         } else {
@@ -98,11 +112,11 @@ Template.Criteria.rendered = function () {
     Session.set("departments", null);
     Session.set("machines", null);
     Session.set("users", null);
-	moment.lang('en', {
-    week : {
-        dow : 1 // Monday is the first day of the week
-    }
-	});
+    moment.lang('en', {
+        week: {
+            dow: 1 // Monday is the first day of the week
+        }
+    });
     $("#from-criteria").datetimepicker({
         format: "YYYY-MM-DD HH:mm:00",
         sideBySide: true,
@@ -287,11 +301,11 @@ Template.Criteria.events({
             getCause(null, 1, (selectedDepartment.length > 0) ? selectedDepartment : null, true);
         } else {
             getCause(
-                (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
-                (selectedType.length > 0) ? selectedType : null,
-                (selectedDepartment.length > 0) ? selectedDepartment : null,
-                true
-                );
+                    (selectedType.length <= 0 && selectedDepartment.length <= 0) ? user.id : null,
+                    (selectedType.length > 0) ? selectedType : null,
+                    (selectedDepartment.length > 0) ? selectedDepartment : null,
+                    true
+                    );
         }
     },
     "click #sb-department-criteria": function (e) {

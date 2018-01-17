@@ -159,7 +159,7 @@ function getMachinesByDamages(damages) {
     });
 
     damages.forEach(function (damage) {
-        if (damage.machine !== machineId && damage.type != 3) {
+        if (damage.machine !== machineId) {
             machines++;
             machineId = damage.machine;
         }
@@ -185,6 +185,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                     if (response) {
                         var values = JSON.parse(response);
                         var damages = JSON.parse(values.damages);
+                        var machines = JSON.parse(values.machines);
 
                         if (damages) {
                             var totalDuration = 0;
@@ -214,7 +215,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                             Session.set("damages", damages);
                             
                             var totalCauses = countMechanical + countElectrical;
-                            var machines = getMachinesByDamages(damages);
+//                            var machines = getMachinesByDamages(damages);
                             var criteriaDuration = (Number(values.period) * machines) / 60000;
                             
                             mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
@@ -422,12 +423,12 @@ getPareto = function getPareto(userId, criteria) {
                                         "caption": "Pareto Analysis",
                                         "subcaption": (criteria) ?
                                                 "Περίοδος: " + criteria.from + " - " + criteria.to +
-                                                " - MTTR(λεπτά): " + info.mttr +
-                                                " - MTBF(λεπτά): " + info.mtbf +
+//                                                " - MTTR(λεπτά): " + info.mttr +
+//                                                " - MTBF(λεπτά): " + info.mtbf +
                                                 " - " + info.machineCodes :
                                                 "Περίοδος: Τρέχουσα Βάρδια" +
-                                                " - MTTR(λεπτά): " + info.mttr +
-                                                " - MTBF(λεπτά): " + info.mtbf +
+//                                                " - MTTR(λεπτά): " + info.mttr +
+//                                                " - MTBF(λεπτά): " + info.mtbf +
                                                 " - " + info.machineCodes,
                                         "numberprefix": "",
                                         "yaxisname": "Ώρες καθυστέρησης",
