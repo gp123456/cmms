@@ -74,9 +74,15 @@
                     <h4>Μηχανή: {{descriptionMachine}} - Περίοδος: Τρέχουσα Βάρδια - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
                 </div>
                 {{else}}
+                {{#if hasDeleted}}
+                <div class="row" style="text-align: center">
+                    <h4>Διαγραμμένες Αιτίες</h4>
+                </div>
+                {{else}}
                 <div class="row" style="text-align: center">
                     <h4>Περίοδος: Τρέχουσα Βάρδια - MTTR(λεπτά): {{mttr}} - MTBF(λεπτά): {{mtbf}} - {{damage_counters}}</h4>
                 </div>
+                {{/if}}
                 {{/if}}
                 {{/if}}
                 {{/if}}

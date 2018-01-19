@@ -181,6 +181,7 @@ Template.SearchDamage.rendered = function () {
     var user = Session.get("user");
 
     if (user) {
+        Session.set("hasDeleted", null);
         Session.set("damages", null);
         Session.set("damage", null);
         Session.set("subcauses", null);
@@ -215,6 +216,11 @@ Template.SearchDamage.helpers({
     },
     hasCriteria: function () {
         return Session.get("from") && Session.get("to");
+    },
+    hasDeleted: function () {
+        var hasDeleted = Session.get("hasDeleted");
+        
+        return hasDeleted;
     },
     from: function () {
         var from = Session.get("from");
@@ -401,7 +407,7 @@ Template.SearchDamage.helpers({
 Template.SearchDamage.events({
     "click #damage-view": function (e) {
         e.preventDefault();
-
+        
         var user = Session.get("user");
 
         if (user) {
@@ -470,12 +476,16 @@ Template.SearchDamage.events({
     },
     "click #recycle": function (e) {
         e.preventDefault();
+        
+        Session.set("hasDeleted", true);
 
         getDeleteDamages();
     },
     "click [name=\"refresh\"]": function (e, t) {
         e.preventDefault();
 
+        Session.set("hasDeleted", null);
+        
         var user = Session.get("user");
 
         if (user) {
