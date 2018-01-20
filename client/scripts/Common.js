@@ -169,6 +169,7 @@ function getMachinesByDamages(damages) {
 }
 
 getDamages = function getDamages(callFunction, userId, criteria) {
+    $('#table-damage').bootstrapTable("destroy");
     Meteor.call(
             callFunction,
             userId,
@@ -181,7 +182,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                     var damage_counters = "";
                     var mttr = 0.0;
                     var mtbf = 0.0;
-                    
+
                     if (response) {
                         var values = JSON.parse(response);
                         var damages = JSON.parse(values.damages);
@@ -207,17 +208,18 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                                 } else if (damage.type === 3) {
                                     countDelay++;
                                 }
-                                
-                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);	
+
+                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);
                             });
-                            
+
                             $("#table-damage").bootstrapTable({data: damages});
+
                             Session.set("damages", damages);
-                            
+
                             var totalCauses = countMechanical + countElectrical;
 //                            var machines = getMachinesByDamages(damages);
                             var criteriaDuration = (Number(values.period) * machines) / 60000;
-                            
+
                             mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
                             mtbf = (totalCauses) ? (criteriaDuration - (totalDuration / 60)) / totalCauses : 0;
                             if (countMechanical) {
@@ -247,6 +249,59 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                 } catch (error) {
                 }
             })
+}
+
+getTimeDamages = function getTimeDamages(callFunction, userId, criteria) {
+    var start = new Date();
+
+    alert(start);
+    
+    Meteor.call(
+            callFunction,
+            userId,
+            Router.current().params.query.machineId,
+            Router.current().params.query.departmentId,
+            criteria,
+            function (error, response) {
+                var values = JSON.parse(response);
+                var damages = JSON.parse(values.damages);
+
+                if (damages) {
+                    var created;
+                    var minuteDuration
+                    var totalDuration = 0;
+                    var countMechanical = 0;
+                    var totalDurationCause = 0;
+                    var countElectrical = 0;
+                    var countDelay = 0;
+                    
+                    damages.forEach(function (damage) {
+                        created = "<a id='damage-view' data-id='" + damage.id + "'>" +
+                                moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
+                        totalDuration += damage.duration;
+                        if (damage.type === 1) {
+                            countMechanical++;
+                            totalDurationCause += damage.duration;
+                        } else if (damage.type === 2) {
+                            countElectrical++;
+                            totalDurationCause += damage.duration;
+                        } else if (damage.type === 3) {
+                            countDelay++;
+                        }
+
+                        minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);
+                    });
+                    var end = new Date();
+    
+                    alert(end);
+                    
+                    alert(end - start);
+
+                    return end - start;
+                }
+            });
+
+    return 0;
 }
 
 exportAllContacts = function exportAllContacts(damages) {
@@ -475,6 +530,20 @@ getPareto = function getPareto(userId, criteria) {
                 } catch (error) {
 
                 }
+            });
+}
+
+getTimePareto = function getTimePareto(userId, criteria) {
+    var FusionCharts = require("fusioncharts");
+    require("fusioncharts/fusioncharts.charts")(FusionCharts);
+    require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
+    Meteor.call(
+            'getPareto',
+            userId,
+            Router.current().params.query.machineId,
+            Router.current().params.query.departmentId,
+            criteria,
+            function (error, response) {
             });
 }
 

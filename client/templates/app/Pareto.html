@@ -1,5 +1,10 @@
 <template name="Pareto">
     <style type="text/css">
+        #container1 {
+            margin: 20 px;
+            width: 100%;
+            height: 20px;
+        }
         .table thead th {
             color: black;
             background-color: white;
@@ -26,6 +31,7 @@
         <div class="content">
             <h3 style="text-align: center">Προβολή Pareto</h3>
             {{> Criteria}}
+            <div id="container1" style="display: none"></div>
             <div id="chartContainer"></div>
         </div>
     </div>

@@ -101,7 +101,7 @@ function updateDamage(id) {
             user: $("#user-modal option:selected").val(),
             note: $("#note-modal").val(),
             type: (user.type === 1 || user.type === 4) ? type : null,
-            cause:(user.type === 1 || user.type === 4) ? cause : null,
+            cause: (user.type === 1 || user.type === 4) ? cause : null,
             duration: (user.type === 1 || user.type === 4) ? $("#duration-modal").val() : null
         };
 
@@ -219,7 +219,7 @@ Template.SearchDamage.helpers({
     },
     hasDeleted: function () {
         var hasDeleted = Session.get("hasDeleted");
-        
+
         return hasDeleted;
     },
     from: function () {
@@ -300,8 +300,8 @@ Template.SearchDamage.helpers({
         if (damage) {
             damage.created = moment(damage.created).format("llll");
             damage.title = (damage.descriptionSubcause !== "")
-                ? damage.descriptionType + ": " + damage.descriptionCause + "[" + damage.descriptionSubcause + "]"
-                : damage.descriptionType + ": " + damage.descriptionCause;
+                    ? damage.descriptionType + ": " + damage.descriptionCause + "[" + damage.descriptionSubcause + "]"
+                    : damage.descriptionType + ": " + damage.descriptionCause;
 
             return damage;
         }
@@ -356,7 +356,7 @@ Template.SearchDamage.helpers({
             users.forEach(function (u) {
                 _users.push(u);
             });
-            
+
             return _users;
         }
 
@@ -407,7 +407,7 @@ Template.SearchDamage.helpers({
 Template.SearchDamage.events({
     "click #damage-view": function (e) {
         e.preventDefault();
-        
+
         var user = Session.get("user");
 
         if (user) {
@@ -476,7 +476,7 @@ Template.SearchDamage.events({
     },
     "click #recycle": function (e) {
         e.preventDefault();
-        
+
         Session.set("hasDeleted", true);
 
         getDeleteDamages();
@@ -485,7 +485,7 @@ Template.SearchDamage.events({
         e.preventDefault();
 
         Session.set("hasDeleted", null);
-        
+
         var user = Session.get("user");
 
         if (user) {

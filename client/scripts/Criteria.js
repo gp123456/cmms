@@ -1,5 +1,79 @@
 /* global Template, Session, Blaze, Meteor */
-//var ProgressBar = require('progressbar.js')
+function submitTimeSearchDamage() {
+    var user = Session.get("user");
+
+    if (user) {
+        var from = $("#from-criteria").val();
+        var to = $("#to-criteria").val();
+        var selectedDepartments = [];
+        $("#department-criteria option:selected").each(function (index, value) {
+            selectedDepartments.push(Number($(this).val()));
+        });
+        var selectedMachines = [];
+        $("#machine-criteria option:selected").each(function (index, value) {
+            selectedMachines.push(Number($(this).val()));
+        });
+        var selectedTypes = [];
+
+        if (user.type === 2) {
+            selectedTypes.push(2);
+        } else if (user.type === 3) {
+            selectedTypes.push(1);
+        } else {
+            $("#type-criteria option:selected").each(function (index, value) {
+                selectedTypes.push(Number($(this).val()));
+            });
+        }
+        var selectedCauses = [];
+        $("#cause-criteria option:selected").each(function (index, value) {
+            selectedCauses.push(Number($(this).val()));
+        });
+        var selectedSubcauses = [];
+        if (Router.current().originalUrl.search("pareto") === -1) {
+            $("#subcause-criteria option:selected").each(function (index, value) {
+                selectedSubcauses.push(Number($(this).val()));
+            });
+        }
+        var selectedUsers = [];
+        $("#user-criteria option:selected").each(function (index, value) {
+            selectedUsers.push($(this).val());
+        });
+
+        var criteria = {
+            from: from,
+            to: to,
+            departments: selectedDepartments,
+            machines: selectedMachines,
+            types: selectedTypes,
+            causes: selectedCauses,
+            subcauses: selectedSubcauses,
+            users: selectedUsers
+        };
+
+        Session.set("criteria", criteria);
+
+        if (from !== '' && to !== '') {
+            if (from > to) {
+                return 0;
+            } else if (user.type === 4 && selectedDepartments.length === 0) {
+                return 0;
+            } else {
+                if (Router.current().originalUrl.search("pareto") === -1) {
+                    Session.set("from", criteria.from);
+                    Session.set("to", criteria.to);
+
+                    return getTimeDamages("getDamages", null, criteria);
+                } else {
+                    getTimePareto(null, criteria);
+                }
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    return 0;
+}
 
 function submitSearchDamage() {
     var user = Session.get("user");
@@ -72,27 +146,14 @@ function submitSearchDamage() {
                 $("#from-criteria").val("");
                 $("#tο-criteria").val("");
             } else {
-                $("#progress").show();
-//                var bar = new ProgressBar.Circle(progress1);//, {
-//                    strokeWidth: 6,
-//                    easing: 'easeInOut',
-//                    duration: 1400,
-//                    color: '#FFEA82',
-//                    trailColor: '#eee',
-//                    trailWidth: 1,
-//                    svgStyle: null
-//                });
-
-//                bar.animate(1.0);  // Number from 0.0 to 1.0
                 if (Router.current().originalUrl.search("pareto") === -1) {
                     Session.set("from", criteria.from);
                     Session.set("to", criteria.to);
 
-                    getDamages("getDamages", null, criteria);
+                    duration = getDamages("getDamages", null, criteria);
                 } else {
                     getPareto(null, criteria);
                 }
-                $("#progress").hide();
                 $('.collapse').collapse("hide");
             }
         } else {
@@ -401,7 +462,25 @@ Template.Criteria.events({
     },
     "click #sb-criteria": function (e) {
         e.preventDefault();
-
+        
+        $("#container1").show();
+        
+        var ProgressBar = require('progressbar.js');
+        var bar = new ProgressBar.Line("#container1", {
+            strokeWidth: 4,
+            easing: 'easeInOut',
+            duration: 3000,
+            color: '#FFEA82',
+            trailColor: '#eee',
+            trailWidth: 1,
+            svgStyle: {width: '100%', height: '20%'}
+        });
+        bar.animate(1, {
+            duration: 3000
+        }, function () {
+            $("#container1").hide();
+            bar.destroy();
+        });
         submitSearchDamage();
     },
     "click #clear-pareto": function () {
