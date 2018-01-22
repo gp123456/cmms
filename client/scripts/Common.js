@@ -169,7 +169,20 @@ function getMachinesByDamages(damages) {
 }
 
 getDamages = function getDamages(callFunction, userId, criteria) {
+    var ProgressBar = require('progressbar.js');
+    var bar = new ProgressBar.Circle("#container1", {
+        strokeWidth: 4,
+        easing: 'easeInOut',
+        color: '#FFEA82',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: {width: '100%', height: '20%'}
+    });
+
+    $("#container1").show();
     $('#table-damage').bootstrapTable("destroy");
+    var duration = 0;
+
     Meteor.call(
             callFunction,
             userId,
@@ -178,7 +191,6 @@ getDamages = function getDamages(callFunction, userId, criteria) {
             criteria,
             function (error, response) {
                 try {
-                    $('#table-damage').bootstrapTable("destroy");
                     var damage_counters = "";
                     var mttr = 0.0;
                     var mtbf = 0.0;
@@ -217,7 +229,6 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                             Session.set("damages", damages);
 
                             var totalCauses = countMechanical + countElectrical;
-//                            var machines = getMachinesByDamages(damages);
                             var criteriaDuration = (Number(values.period) * machines) / 60000;
 
                             mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
@@ -246,62 +257,27 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                     Session.set("mttr", mttr.toFixed(2));
                     Session.set("mtbf", mtbf.toFixed(2));
                     Session.set("damage_counters", damage_counters);
+                    duration = 1;
                 } catch (error) {
                 }
             })
-}
-
-getTimeDamages = function getTimeDamages(callFunction, userId, criteria) {
-    var start = new Date();
-
-    alert(start);
-    
-    Meteor.call(
-            callFunction,
-            userId,
-            Router.current().params.query.machineId,
-            Router.current().params.query.departmentId,
-            criteria,
-            function (error, response) {
-                var values = JSON.parse(response);
-                var damages = JSON.parse(values.damages);
-
-                if (damages) {
-                    var created;
-                    var minuteDuration
-                    var totalDuration = 0;
-                    var countMechanical = 0;
-                    var totalDurationCause = 0;
-                    var countElectrical = 0;
-                    var countDelay = 0;
-                    
-                    damages.forEach(function (damage) {
-                        created = "<a id='damage-view' data-id='" + damage.id + "'>" +
-                                moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
-                        totalDuration += damage.duration;
-                        if (damage.type === 1) {
-                            countMechanical++;
-                            totalDurationCause += damage.duration;
-                        } else if (damage.type === 2) {
-                            countElectrical++;
-                            totalDurationCause += damage.duration;
-                        } else if (damage.type === 3) {
-                            countDelay++;
-                        }
-
-                        minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);
-                    });
-                    var end = new Date();
-    
-                    alert(end);
-                    
-                    alert(end - start);
-
-                    return end - start;
-                }
+    var count = 0;
+    var Interval = Meteor.setInterval(function () {
+        bar.animate(count, {
+            duration: 1
+        }, function () {
+        });
+        count += 0.1;
+        if (duration > 0) {
+            bar.animate(1, {
+                duration: 1
+            }, function () {
+                $("#container1").hide();
+                bar.destroy();
             });
-
-    return 0;
+            Meteor.clearInterval(Interval);
+        }
+    }, 100);
 }
 
 exportAllContacts = function exportAllContacts(damages) {
@@ -440,7 +416,19 @@ function clearPareto(criteria) {
 }
 
 getPareto = function getPareto(userId, criteria) {
+    var ProgressBar = require('progressbar.js');
+    var bar = new ProgressBar.Circle("#container1", {
+        strokeWidth: 4,
+        easing: 'easeInOut',
+        color: '#FFEA82',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: {width: '100%', height: '20%'}
+    });
     var FusionCharts = require("fusioncharts");
+    var duration = 0;
+    
+    $("#container1").show();
     require("fusioncharts/fusioncharts.charts")(FusionCharts);
     require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
     Meteor.call(
@@ -527,24 +515,29 @@ getPareto = function getPareto(userId, criteria) {
                     } else {
                         clearPareto(criteria);
                     }
+                    duration = 1;
                 } catch (error) {
 
                 }
             });
-}
-
-getTimePareto = function getTimePareto(userId, criteria) {
-    var FusionCharts = require("fusioncharts");
-    require("fusioncharts/fusioncharts.charts")(FusionCharts);
-    require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
-    Meteor.call(
-            'getPareto',
-            userId,
-            Router.current().params.query.machineId,
-            Router.current().params.query.departmentId,
-            criteria,
-            function (error, response) {
+    
+    var count = 0;
+    var Interval = Meteor.setInterval(function () {
+        bar.animate(count, {
+            duration: 1
+        }, function () {
+        });
+        count += 0.1;
+        if (duration > 0) {
+            bar.animate(1, {
+                duration: 1
+            }, function () {
+                $("#container1").hide();
+                bar.destroy();
             });
+            Meteor.clearInterval(Interval);
+        }
+    }, 100);
 }
 
 clearSession = function clearSession() {
