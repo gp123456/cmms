@@ -230,9 +230,10 @@ getDamages = function getDamages(callFunction, userId, criteria) {
 
                             var totalCauses = countMechanical + countElectrical;
                             var criteriaDuration = (Number(values.period) * machines) / 60000;
-
+                            
                             mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
-                            mtbf = (totalCauses) ? (criteriaDuration - (totalDuration / 60)) / totalCauses : 0;
+                            mtbf = (totalCauses) ? (criteriaDuration - (totalDuration / 60)) / totalCauses : criteriaDuration - (totalDuration / 60);
+                            
                             if (countMechanical) {
                                 damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
                             } else {
@@ -251,6 +252,7 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                         } else {
                             damage_counters = "M:0,H:0,K:0";
                         }
+                        mtbf = (Number(values.period) * machines) / 60000;
                     } else {
                         damage_counters = "M:0,H:0,K:0";
                     }
