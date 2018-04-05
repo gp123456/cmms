@@ -257,7 +257,7 @@ Template.InsertDamage.events({
 
                 return;
             }
-            if (cause == -1) {
+            if (cause == -1 || cause == 0) {
                 swal({
                     title: "Έλεγχος Κύριας Αιτίας",
                     text: "Πρέπει να επιλέξεις μια κύρια αιτία",
@@ -267,7 +267,7 @@ Template.InsertDamage.events({
 
                 return;
             }
-            if (type != 3 && subcause == -1) {
+            if (type != 3 && (subcause == -1 || subcause == 0)) {
                 swal({
                     title: "Έλεγχος Αιτίας",
                     text: "Πρέπει να επιλέξεις μια αιτία",
@@ -298,12 +298,12 @@ Template.InsertDamage.events({
                 return;
             }
             insertDamage();
-            $("#department > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
-            $("#machine > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
-            $("#type > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
-            $("#cause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
-            $("#subcause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
-            $("#created").val("");
+//            $("#department > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+//            $("#machine > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+//            $("#type > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+//            $("#cause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+//            $("#subcause > option").removeAttr("selected").filter("[value='-1']").attr("selected", "selected");
+//            $("#created").val("");
             $("#duration").val("");
         }
     }

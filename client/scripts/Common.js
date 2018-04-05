@@ -251,8 +251,8 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                             }
                         } else {
                             damage_counters = "M:0,H:0,K:0";
+							mtbf = (Number(values.period) * machines) / 60000;
                         }
-                        mtbf = (Number(values.period) * machines) / 60000;
                     } else {
                         damage_counters = "M:0,H:0,K:0";
                     }

@@ -194,6 +194,11 @@ Template.SearchDamage.rendered = function () {
         Session.set("mttr", 0);
         Session.set("mtbf", 0);
         Session.set("criteria", null);
+        $("#cause-type-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#cause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#subcause-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#user-modal > option").removeAttr("selected").filter("[value='null']").attr("selected", "selected");
+        $("#note-modal").val("");
         if (Router.current().params.query.machineId) {
             getMachine(Router.current().params.query.machineId, null, null);
         }
