@@ -543,10 +543,54 @@ Template.SearchDamage.events({
     "click #export": function (e) {
         e.preventDefault();
 
-        var damages = Session.get("damages");
+        var user = Session.get("user");
+        var criteria = Session.get("criteria");
+        var bar = new ProgressBar.Circle("#container1", {
+            strokeWidth: 4,
+            easing: 'easeInOut',
+            color: '#FFEA82',
+            trailColor: '#eee',
+            trailWidth: 1,
+            svgStyle: {width: '100%', height: '20%'}
+        });
 
-        if (damages) {
-            exportAllContacts(damages);
-        }
+        $("#container1").show();
+        Meteor.call(
+                "getDamages",
+                user.id,
+                Router.current().params.query.machineId,
+                Router.current().params.query.departmentId,
+                criteria,
+                function (error, response) {
+                    try {
+                        if (response) {
+                            var values = JSON.parse(response);
+                            var damages = JSON.parse(values.damages);
+
+                            if (damages) {
+                                exportAllContacts(damages);
+                            }
+                        }
+                        duration = 1;
+                    } catch (error) {
+                    }
+                })
+        var count = 0;
+        var Interval = Meteor.setInterval(function () {
+            bar.animate(count, {
+                duration: 1
+            }, function () {
+            });
+            count += 0.1;
+            if (duration > 0) {
+                bar.animate(1, {
+                    duration: 1
+                }, function () {
+                    $("#container1").hide();
+                    bar.destroy();
+                });
+                Meteor.clearInterval(Interval);
+            }
+        }, 100);
     }
 });

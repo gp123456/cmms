@@ -194,73 +194,57 @@ getDamages = function getDamages(callFunction, userId, criteria) {
                     var damage_counters = "";
                     var mttr = 0.0;
                     var mtbf = 0.0;
-
+                    
                     if (response) {
                         var values = JSON.parse(response);
                         var damages = JSON.parse(values.damages);
-                        var machines = JSON.parse(values.machines);
+                        var counters = JSON.parse(values.counters);
 
                         if (damages) {
-                            var totalDuration = 0;
-                            var totalDurationCause = 0;
-                            var countElectrical = 0;
-                            var countMechanical = 0;
-                            var countDelay = 0;
-
                             damages.forEach(function (damage) {
                                 damage.created = "<a id='damage-view' data-id='" + damage.id + "'>" +
                                         moment(damage.created).format("YYYY-MM-DD HH:mm:ss") + "</a>";
-                                totalDuration += damage.duration;
-                                if (damage.type === 1) {
-                                    countMechanical++;
-                                    totalDurationCause += damage.duration;
-                                } else if (damage.type === 2) {
-                                    countElectrical++;
-                                    totalDurationCause += damage.duration;
-                                } else if (damage.type === 3) {
-                                    countDelay++;
-                                }
-
-                                damage.minuteDuration = Number(damage.minuteDuration + damage.secondsDuration / 60.0).toFixed(1);
+                                damage.minuteDuration = Number(damage.minuteDuration).toFixed(1);
                             });
-
                             $("#table-damage").bootstrapTable({data: damages});
 
-                            Session.set("damages", damages);
+                            var totalCauses = Number(counters.countMechanical) + Number(counters.countElectrical);
+                            var criteriaDuration = (Number(values.period) * Number(values.machines)) / 60000;
 
-                            var totalCauses = countMechanical + countElectrical;
-                            var criteriaDuration = (Number(values.period) * machines) / 60000;
-                            
-                            mttr = (totalCauses) ? (totalDurationCause / 60) / totalCauses : 0;
-                            mtbf = (totalCauses) ? (criteriaDuration - (totalDuration / 60)) / totalCauses : criteriaDuration - (totalDuration / 60);
-                            
-                            if (countMechanical) {
-                                damage_counters += (damage_counters === "") ? "M:" + countMechanical : ",M:" + countMechanical;
+                            mttr = (totalCauses) ? (counters.totalDurationCause / 60) / totalCauses : 0;
+                            mtbf = (totalCauses) 
+                                ? (criteriaDuration - (Number(counters.totalDuration)/60))/totalCauses 
+                                : criteriaDuration - (Number((counters.totalDuration))/60);
+
+                            if (counters.countMechanical) {
+                                damage_counters += (damage_counters === "") ? "M:" + counters.countMechanical : ",M:" + counters.countMechanical;
                             } else {
                                 damage_counters += (damage_counters === "") ? "M:0" : ",M:0";
                             }
-                            if (countElectrical) {
-                                damage_counters += (damage_counters === "") ? "H:" + countElectrical : ",H:" + countElectrical;
+                            if (counters.countElectrical) {
+                                damage_counters += (damage_counters === "") ? "H:" + counters.countElectrical : ",H:" + counters.countElectrical;
                             } else {
                                 damage_counters += (damage_counters === "") ? "H:0" : ",H:0";
                             }
-                            if (countDelay) {
-                                damage_counters += (damage_counters === "") ? "K:" + countDelay : ",K:" + countDelay;
+                            if (counters.countDelay) {
+                                damage_counters += (damage_counters === "") ? "K:" + counters.countDelay : ",K:" + counters.countDelay;
                             } else {
                                 damage_counters += (damage_counters === "") ? "K:0" : ",K:0";
                             }
                         } else {
                             damage_counters = "M:0,H:0,K:0";
-							mtbf = (Number(values.period) * machines) / 60000;
+                            mtbf = (Number(values.period) * values.machines) / 60000;
                         }
                     } else {
                         damage_counters = "M:0,H:0,K:0";
                     }
+                    
                     Session.set("mttr", mttr.toFixed(2));
                     Session.set("mtbf", mtbf.toFixed(2));
                     Session.set("damage_counters", damage_counters);
                     duration = 1;
                 } catch (error) {
+                    console.log(error)
                 }
             })
     var count = 0;
@@ -316,7 +300,7 @@ exportAllContacts = function exportAllContacts(damages) {
                 "<td>" + damage.descriptionUser + "</td>" +
                 "<td>" + damage.descriptionCause + "</td>" +
                 "<td>" + damage.descriptionSubcause + "</td>" +
-                "<td>" + damage.minuteDuration.replace('.', ',') + "</td>" +
+                "<td>" + Number(damage.minuteDuration).toFixed(1).replace('.', ',') + "</td>" +
                 "<td>" + damage.note + "</td>" +
                 "</tr>";
     });
@@ -329,9 +313,11 @@ exportAllContacts = function exportAllContacts(damages) {
 };
 function  _downloadCSV(data) {
     var blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-
+    
     if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob, "damage.xls");
+        
+        console.log("finished windows");
     } else {
         var a = window.document.createElement("a");
         a.href = window.URL.createObjectURL(blob);
@@ -429,7 +415,7 @@ getPareto = function getPareto(userId, criteria) {
     });
     var FusionCharts = require("fusioncharts");
     var duration = 0;
-    
+
     $("#container1").show();
     require("fusioncharts/fusioncharts.charts")(FusionCharts);
     require("fusioncharts/themes/fusioncharts.theme.ocean")(FusionCharts);
@@ -522,7 +508,7 @@ getPareto = function getPareto(userId, criteria) {
 
                 }
             });
-    
+
     var count = 0;
     var Interval = Meteor.setInterval(function () {
         bar.animate(count, {
