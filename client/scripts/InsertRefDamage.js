@@ -100,7 +100,6 @@ function deleteSubcause(id) {
             if (response) {
                 swal({
                     title: "Η Διαγραφή της βλάβης πέτυχε!",
-                    text: response,
                     type: "success",
                     showCancelButton: false,
                 });
@@ -130,7 +129,6 @@ function deleteCause(id) {
             if (response) {
                 swal({
                     title: "Η Διαγραφή της βλάβης πέτυχε!",
-                    text: response,
                     type: "success",
                     showCancelButton: false,
                 });

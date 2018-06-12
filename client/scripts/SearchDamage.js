@@ -10,6 +10,8 @@ function restoreDamage(id, name) {
     var user = Session.get("user");
 
     if (user) {
+        alert("restoreDamage");
+        
         swal({
             title: "Να προχωρήσω στην επαναφορά;",
             text: "Θα επανέρθει η βλάβη: '" + name + "'!",
@@ -21,9 +23,10 @@ function restoreDamage(id, name) {
         }, function () {
             Meteor.call('restoreDamage', id, function (error, response) {
                 if (response) {
+                    alert("confirm restoreDamage");
+                    
                     swal({
                         title: "Η Επαναφορά της βλάβης πέτυχε!",
-                        text: response,
                         type: "success",
                         showCancelButton: false,
                     });
@@ -36,6 +39,8 @@ function restoreDamage(id, name) {
                         getDamages("getDamages", user.id, null);
                     }
                 } else {
+                    alert("error restoreDamage");
+                    
                     swal({
                         title: "Η Επαναφορά της βλάβης απέτυχε!",
                         text: error,
@@ -52,6 +57,8 @@ function deleteDamage(id) {
     var user = Session.get("user");
 
     if (user) {
+        alert("deleteDamage");
+        
         swal({
             title: "Να προχωρήσω στην διαγραφή;",
             text: "Θα διαγραφή η αιτία: '" + $("#cause-modal").val() + "' και όλες οι δευτερεύουσες αιτίες αυτής!",
@@ -63,9 +70,10 @@ function deleteDamage(id) {
         }, function () {
             Meteor.call('deleteDamage', id, function (error, response) {
                 if (response) {
+                    alert("confirm deleteDamage");
+                    
                     swal({
                         title: "Η Διαγραφή της βλάβης πέτυχε!",
-                        text: response,
                         type: "success",
                         showCancelButton: false,
                     });
@@ -78,6 +86,8 @@ function deleteDamage(id) {
                         getDamages("getDamages", user.id, null);
                     }
                 } else {
+                    alert("error deleteDamage");
+                    
                     swal({
                         title: "Η Διαγραφή της βλάβης απέτυχε!",
                         text: error,
@@ -107,9 +117,10 @@ function updateDamage(id) {
 
         Meteor.call('updateDamage', damage, function (error, response) {
             if (response) {
+                alert("updateDamage");
+                
                 swal({
                     title: "Η διόρθωση της βλάβης έγινε!",
-                    text: response,
                     type: "success",
                     showCancelButton: false
                 });
@@ -121,11 +132,13 @@ function updateDamage(id) {
                     getDamages("getDamages", user.id, null);
                 }
             } else {
+                alert("error updateDamage");
+                
                 swal({
                     title: "Η διόρθωση της βλάβης απέτυχε!",
                     text: error,
                     type: "warning",
-                    showCancelButton: false,
+                    showCancelButton: false
                 });
             }
         });

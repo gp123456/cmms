@@ -26,7 +26,6 @@ function insertDamage() {
             if (response) {
                 swal({
                     title: "Η εισαγωγή της αιτίας πέτυχε!",
-                    text: response,
                     type: "success",
                     showCancelButton: false,
                 });
